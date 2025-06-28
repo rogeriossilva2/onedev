@@ -36,8 +36,8 @@ const Dashboard: React.FC = () => {
       total: toolUsage.length,
       icon: Zap,
       color: 'from-blue-500 to-blue-600',
-      bgColor: 'bg-blue-50 border-blue-200',
-      textColor: 'text-blue-900'
+      bgColor: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800',
+      textColor: 'text-blue-900 dark:text-blue-100'
     },
     {
       title: 'Total de Usos',
@@ -45,8 +45,8 @@ const Dashboard: React.FC = () => {
       total: null,
       icon: Activity,
       color: 'from-green-500 to-green-600',
-      bgColor: 'bg-green-50 border-green-200',
-      textColor: 'text-green-900'
+      bgColor: 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800',
+      textColor: 'text-green-900 dark:text-green-100'
     },
     {
       title: 'Sessões Ativas',
@@ -54,8 +54,8 @@ const Dashboard: React.FC = () => {
       total: null,
       icon: Users,
       color: 'from-purple-500 to-purple-600',
-      bgColor: 'bg-purple-50 border-purple-200',
-      textColor: 'text-purple-900'
+      bgColor: 'bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800',
+      textColor: 'text-purple-900 dark:text-purple-100'
     },
     {
       title: 'Privacidade',
@@ -63,8 +63,8 @@ const Dashboard: React.FC = () => {
       total: null,
       icon: Shield,
       color: 'from-emerald-500 to-emerald-600',
-      bgColor: 'bg-emerald-50 border-emerald-200',
-      textColor: 'text-emerald-900'
+      bgColor: 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800',
+      textColor: 'text-emerald-900 dark:text-emerald-100'
     }
   ];
 
@@ -96,20 +96,20 @@ const Dashboard: React.FC = () => {
             Dashboard
           </h1>
         </div>
-        <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+        <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">
           Visão geral do seu uso das ferramentas OneDev - dados armazenados localmente no seu navegador
         </p>
       </div>
 
       {/* Tool Usage Tracking Notice */}
-      <div className="mb-8 p-4 rounded-lg border bg-blue-50 border-blue-200">
+      <div className="mb-8 p-4 rounded-lg border bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
         <div className="flex items-center gap-3">
-          <Info className="w-5 h-5 text-blue-600" />
+          <Info className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           <div>
-            <h3 className="font-medium text-blue-900">
+            <h3 className="font-medium text-blue-900 dark:text-blue-100">
               📊 Contagem de Uso de Ferramentas
             </h3>
-            <p className="text-sm text-blue-700">
+            <p className="text-sm text-blue-700 dark:text-blue-300">
               A contagem de uso das ferramentas é <strong>obrigatória</strong> e sempre ativa para melhorar sua experiência. 
               Todos os dados permanecem localmente no seu navegador.
             </p>
@@ -121,21 +121,21 @@ const Dashboard: React.FC = () => {
       {cookieConsent !== null && (
         <div className={`mb-8 p-4 rounded-lg border ${
           cookieConsent 
-            ? 'bg-green-50 border-green-200' 
-            : 'bg-amber-50 border-amber-200'
+            ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' 
+            : 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800'
         }`}>
           <div className="flex items-center gap-3">
             <Shield className={`w-5 h-5 ${
-              cookieConsent ? 'text-green-600' : 'text-amber-600'
+              cookieConsent ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400'
             }`} />
             <div>
               <h3 className={`font-medium ${
-                cookieConsent ? 'text-green-900' : 'text-amber-900'
+                cookieConsent ? 'text-green-900 dark:text-green-100' : 'text-amber-900 dark:text-amber-100'
               }`}>
                 {cookieConsent ? '✅ Cookies Aceitos' : '⚠️ Cookies Limitados'}
               </h3>
               <p className={`text-sm ${
-                cookieConsent ? 'text-green-700' : 'text-amber-700'
+                cookieConsent ? 'text-green-700 dark:text-green-300' : 'text-amber-700 dark:text-amber-300'
               }`}>
                 {cookieConsent 
                   ? 'Todas as funcionalidades de analytics estão ativas.'
@@ -148,12 +148,12 @@ const Dashboard: React.FC = () => {
       )}
 
       {/* Privacy Notice */}
-      <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6 mb-8">
+      <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800 rounded-2xl p-6 mb-8">
         <div className="flex items-start gap-3">
-          <Shield className="w-6 h-6 text-green-600 mt-0.5 flex-shrink-0" />
+          <Shield className="w-6 h-6 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
           <div>
-            <h3 className="text-lg font-semibold text-green-900 mb-2">🔒 Dados 100% Locais</h3>
-            <p className="text-green-800 leading-relaxed">
+            <h3 className="text-lg font-semibold text-green-900 dark:text-green-100 mb-2">🔒 Dados 100% Locais</h3>
+            <p className="text-green-800 dark:text-green-300 leading-relaxed">
               Todas as estatísticas mostradas neste dashboard são armazenadas localmente no seu navegador. 
               <strong> Nenhum dado é enviado para nossos servidores ou terceiros.</strong> A contagem de uso 
               das ferramentas é obrigatória para melhorar sua experiência, mas permanece sempre no seu dispositivo.
@@ -173,13 +173,13 @@ const Dashboard: React.FC = () => {
                   <Icon className="w-6 h-6 text-white" />
                 </div>
                 {stat.total && (
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
                     de {stat.total}
                   </span>
                 )}
               </div>
               <div className="space-y-1">
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {typeof stat.value === 'number' && stat.total ? 
                     `${stat.value}/${stat.total}` : 
                     stat.value
@@ -196,11 +196,11 @@ const Dashboard: React.FC = () => {
 
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Tool Usage - SEMPRE DISPONÍVEL */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/20">
+        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/20 dark:border-gray-700/20">
           <div className="flex items-center gap-2 mb-6">
-            <TrendingUp className="w-5 h-5 text-indigo-600" />
-            <h2 className="text-xl font-semibold text-gray-800">Uso das Ferramentas</h2>
-            <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+            <TrendingUp className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Uso das Ferramentas</h2>
+            <span className="ml-2 px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs rounded-full">
               SEMPRE ATIVO
             </span>
           </div>
@@ -212,25 +212,25 @@ const Dashboard: React.FC = () => {
                 const percentage = totalUsage > 0 ? (tool.uses / totalUsage) * 100 : 0;
                 
                 return (
-                  <div key={tool.id} className="bg-gray-50 rounded-lg p-4">
+                  <div key={tool.id} className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-3">
-                        <Activity className="w-5 h-5 text-gray-600" />
-                        <span className="font-medium text-gray-900">{tool.name}</span>
+                        <Activity className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                        <span className="font-medium text-gray-900 dark:text-gray-100">{tool.name}</span>
                       </div>
-                      <span className="text-sm font-semibold text-gray-700">
+                      <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                         {tool.uses} {tool.uses === 1 ? 'uso' : 'usos'}
                       </span>
                     </div>
                     
-                    <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-2">
                       <div 
                         className="bg-gradient-to-r from-indigo-500 to-purple-600 h-2 rounded-full transition-all duration-500"
                         style={{ width: `${percentage}%` }}
                       />
                     </div>
                     
-                    <div className="flex items-center justify-between text-xs text-gray-500">
+                    <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                       <span>{percentage.toFixed(1)}% do total</span>
                       <span>Último uso: {formatDate(tool.lastUsed)}</span>
                     </div>
@@ -243,41 +243,41 @@ const Dashboard: React.FC = () => {
         {/* Session Info & Privacy */}
         <div className="space-y-6">
           {/* Session Info */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/20">
+          <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/20 dark:border-gray-700/20">
             <div className="flex items-center gap-2 mb-6">
-              <Clock className="w-5 h-5 text-blue-600" />
-              <h2 className="text-xl font-semibold text-gray-800">Informações da Sessão</h2>
+              <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Informações da Sessão</h2>
             </div>
 
             <div className="space-y-4">
-              <div className="bg-blue-50 rounded-lg p-4">
+              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-blue-900">Sessão Atual:</span>
-                  <span className="text-sm text-blue-700">#{sessionData.currentSession}</span>
+                  <span className="text-sm font-medium text-blue-900 dark:text-blue-100">Sessão Atual:</span>
+                  <span className="text-sm text-blue-700 dark:text-blue-300">#{sessionData.currentSession}</span>
                 </div>
               </div>
 
-              <div className="bg-purple-50 rounded-lg p-4">
+              <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-purple-900">Total de Sessões:</span>
-                  <span className="text-sm text-purple-700">{sessionData.totalSessions}</span>
+                  <span className="text-sm font-medium text-purple-900 dark:text-purple-100">Total de Sessões:</span>
+                  <span className="text-sm text-purple-700 dark:text-purple-300">{sessionData.totalSessions}</span>
                 </div>
               </div>
 
-              <div className="bg-green-50 rounded-lg p-4">
+              <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-green-900">Iniciada em:</span>
-                  <span className="text-sm text-green-700">
+                  <span className="text-sm font-medium text-green-900 dark:text-green-100">Iniciada em:</span>
+                  <span className="text-sm text-green-700 dark:text-green-300">
                     {formatDate(sessionData.startTime)}
                   </span>
                 </div>
               </div>
 
               {mostUsedTool && mostUsedTool.uses > 0 && (
-                <div className="bg-amber-50 rounded-lg p-4">
+                <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-amber-900">Ferramenta Favorita:</span>
-                    <span className="text-sm text-amber-700">{mostUsedTool.name}</span>
+                    <span className="text-sm font-medium text-amber-900 dark:text-amber-100">Ferramenta Favorita:</span>
+                    <span className="text-sm text-amber-700 dark:text-amber-300">{mostUsedTool.name}</span>
                   </div>
                 </div>
               )}
@@ -285,42 +285,42 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Privacy Features */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/20">
+          <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/20 dark:border-gray-700/20">
             <div className="flex items-center gap-2 mb-6">
-              <Shield className="w-5 h-5 text-green-600" />
-              <h2 className="text-xl font-semibold text-gray-800">Recursos de Privacidade</h2>
+              <Shield className="w-5 h-5 text-green-600 dark:text-green-400" />
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Recursos de Privacidade</h2>
             </div>
 
             <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+              <div className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-medium text-green-900">Processamento Local</p>
-                  <p className="text-xs text-green-700">Dados nunca saem do seu navegador</p>
+                  <p className="text-sm font-medium text-green-900 dark:text-green-100">Processamento Local</p>
+                  <p className="text-xs text-green-700 dark:text-green-300">Dados nunca saem do seu navegador</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-                <Database className="w-5 h-5 text-blue-600 flex-shrink-0" />
+              <div className="flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <Database className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-medium text-blue-900">Zero Coleta</p>
-                  <p className="text-xs text-blue-700">Nenhum dado pessoal é coletado</p>
+                  <p className="text-sm font-medium text-blue-900 dark:text-blue-100">Zero Coleta</p>
+                  <p className="text-xs text-blue-700 dark:text-blue-300">Nenhum dado pessoal é coletado</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
-                <Lock className="w-5 h-5 text-purple-600 flex-shrink-0" />
+              <div className="flex items-center gap-3 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                <Lock className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-medium text-purple-900">Criptografia Nativa</p>
-                  <p className="text-xs text-purple-700">Proteção automática do navegador</p>
+                  <p className="text-sm font-medium text-purple-900 dark:text-purple-100">Criptografia Nativa</p>
+                  <p className="text-xs text-purple-700 dark:text-purple-300">Proteção automática do navegador</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3 bg-amber-50 rounded-lg">
-                <Cpu className="w-5 h-5 text-amber-600 flex-shrink-0" />
+              <div className="flex items-center gap-3 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+                <Cpu className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-medium text-amber-900">Client-Side Only</p>
-                  <p className="text-xs text-amber-700">Arquitetura 100% local</p>
+                  <p className="text-sm font-medium text-amber-900 dark:text-amber-100">Client-Side Only</p>
+                  <p className="text-xs text-amber-700 dark:text-amber-300">Arquitetura 100% local</p>
                 </div>
               </div>
             </div>
@@ -329,12 +329,12 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Data Management */}
-      <div className="mt-8 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-6">
+      <div className="mt-8 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-6">
         <div className="flex items-start gap-3">
-          <Activity className="w-6 h-6 text-amber-600 mt-0.5 flex-shrink-0" />
+          <Activity className="w-6 h-6 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-amber-900 mb-2">🗂️ Gerenciar Dados Locais</h3>
-            <p className="text-amber-800 leading-relaxed mb-4">
+            <h3 className="text-lg font-semibold text-amber-900 dark:text-amber-100 mb-2">🗂️ Gerenciar Dados Locais</h3>
+            <p className="text-amber-800 dark:text-amber-300 leading-relaxed mb-4">
               Todos os dados mostrados neste dashboard são armazenados localmente no seu navegador. 
               A contagem de uso das ferramentas é obrigatória para melhorar sua experiência, mas você 
               pode limpar essas informações a qualquer momento:
@@ -342,7 +342,7 @@ const Dashboard: React.FC = () => {
             
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="flex-1">
-                <div className="space-y-2 text-sm text-amber-700">
+                <div className="space-y-2 text-sm text-amber-700 dark:text-amber-300">
                   <p>• <strong>Chrome/Edge:</strong> Configurações → Privacidade → Limpar dados de navegação</p>
                   <p>• <strong>Firefox:</strong> Configurações → Privacidade → Limpar dados</p>
                   <p>• <strong>Safari:</strong> Preferências → Privacidade → Gerenciar dados do site</p>

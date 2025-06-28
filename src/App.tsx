@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ThemeProvider } from './contexts/ThemeContext';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import CepGenerator from './components/CepGenerator';
@@ -13,7 +14,7 @@ import CookieSettingsModal, { CookieSettings } from './components/CookieSettings
 
 import { useAnalytics } from './hooks/useAnalytics';
 
-function App() {
+function AppContent() {
   const [currentTool, setCurrentTool] = useState('dashboard');
   const [showCookieModal, setShowCookieModal] = useState(false);
   const [showCookieSettings, setShowCookieSettings] = useState(false);
@@ -113,6 +114,14 @@ function App() {
         currentSettings={cookieSettings}
       />
     </>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }
 
