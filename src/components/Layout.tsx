@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, Search, Calculator, Palette, Code, Settings, Home, CreditCard, Code2, Link, FileText, BarChart3, Shield, Scale, Cookie, Heart, Cog, Hash, QrCode, GitBranch, Monitor, Key, Lock, Type, Smartphone, User, Server, Building2, MapPin, Activity, MessageSquare, FileX, Wand2, Package, Globe } from 'lucide-react';
+import { Menu, X, Search, Calculator, Palette, Code, Settings, Home, CreditCard, Code2, Link, FileText, BarChart3, Shield, Scale, Cookie, Heart, Cog, Hash, QrCode, GitBranch, Monitor, Key, Lock, Type, Smartphone, User, Server, Building2, MapPin, Activity, MessageSquare, FileX, Wand2, Package, Globe, Car, Vote } from 'lucide-react';
 import CookieSettingsModal, { CookieSettings } from './CookieSettings';
 import ThemeToggle from './ThemeToggle';
 import { useAnalytics } from '../hooks/useAnalytics';
@@ -23,7 +23,8 @@ const Layout: React.FC<LayoutProps> = ({ children, currentTool = 'seo' }) => {
     { id: 'gitignore-generator', name: 'Gerador .gitignore', icon: FileX, active: currentTool === 'gitignore-generator' },
     { id: 'readme-generator', name: 'Gerador README.md', icon: Wand2, active: currentTool === 'readme-generator' },
     { id: 'composer-generator', name: 'Gerador Composer', icon: Package, active: currentTool === 'composer-generator' },
-    { id: 'bank-account-generator', name: 'Gerador de Conta Bancária', icon: CreditCard, active: currentTool === 'bank-account-generator' },
+    { id: 'brazilian-documents', name: 'Documentos Brasileiros', icon: CreditCard, active: currentTool === 'brazilian-documents' },
+    { id: 'bank-account-generator', name: 'Gerador de Conta Bancária', icon: Building2, active: currentTool === 'bank-account-generator' },
     { id: 'device-generator', name: 'Gerador de Dispositivo', icon: Smartphone, active: currentTool === 'device-generator' },
     
     { id: 'person-generator', name: 'Gerador de Pessoa', icon: User, active: currentTool === 'person-generator' },

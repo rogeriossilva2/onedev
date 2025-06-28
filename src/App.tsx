@@ -9,6 +9,7 @@ import ReadmeGenerator from './components/ReadmeGenerator';
 import ComposerGenerator from './components/ComposerGenerator';
 import SlugFormatter from './components/SlugFormatter';
 import IpDetector from './components/IpDetector';
+import BrazilianDocumentsGenerator from './components/BrazilianDocumentsGenerator';
 import FeedbackForm from './components/FeedbackForm';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import CookiePolicy from './components/CookiePolicy';
@@ -95,6 +96,8 @@ function AppContent() {
         return <SlugFormatter />;
       case 'ip-detector':
         return <IpDetector />;
+      case 'brazilian-documents':
+        return <BrazilianDocumentsGenerator />;
       case 'feedback':
         return <FeedbackForm />;
       case 'privacy':
