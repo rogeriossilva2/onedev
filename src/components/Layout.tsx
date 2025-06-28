@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, Search, Calculator, Palette, Code, Settings, Home, CreditCard, Code2, Link, FileText, BarChart3, Shield, Scale, Cookie, Heart, Cog, Hash, QrCode, GitBranch, Monitor, Key, Lock, Type, Smartphone, User, Server, Building2, MapPin, Activity, MessageSquare } from 'lucide-react';
+import { Menu, X, Search, Calculator, Palette, Code, Settings, Home, CreditCard, Code2, Link, FileText, BarChart3, Shield, Scale, Cookie, Heart, Cog, Hash, QrCode, GitBranch, Monitor, Key, Lock, Type, Smartphone, User, Server, Building2, MapPin, Activity, MessageSquare, FileX } from 'lucide-react';
 import CookieSettingsModal, { CookieSettings } from './CookieSettings';
 import ThemeToggle from './ThemeToggle';
 import { useAnalytics } from '../hooks/useAnalytics';
@@ -18,6 +18,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentTool = 'seo' }) => {
   const menuItems = [
     { id: 'dashboard', name: 'Dashboard', icon: BarChart3, active: currentTool === 'dashboard' },
     { id: 'seo', name: 'Gerador de SEO', icon: Search, active: currentTool === 'seo' },
+    { id: 'gitignore-generator', name: 'Gerador .gitignore', icon: FileX, active: currentTool === 'gitignore-generator' },
     { id: 'device-generator', name: 'Gerador de Dispositivo', icon: Smartphone, active: currentTool === 'device-generator' },
     
     { id: 'person-generator', name: 'Gerador de Pessoa', icon: User, active: currentTool === 'person-generator' },

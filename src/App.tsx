@@ -3,11 +3,12 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import CepGenerator from './components/CepGenerator';
+import GitIgnoreGenerator from './components/GitIgnoreGenerator';
+import FeedbackForm from './components/FeedbackForm';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import CookiePolicy from './components/CookiePolicy';
 import LGPDInfo from './components/LGPDInfo';
 import About from './components/About';
-import FeedbackForm from './components/FeedbackForm';
 
 import CookieModal from './components/CookieModal';
 import CookieSettingsModal, { CookieSettings } from './components/CookieSettings';
@@ -77,6 +78,8 @@ function AppContent() {
         return <Dashboard />;
       case 'cep-generator':
         return <CepGenerator />;
+      case 'gitignore-generator':
+        return <GitIgnoreGenerator />;
       case 'feedback':
         return <FeedbackForm />;
       case 'privacy':
