@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import CepGenerator from './components/CepGenerator';
 import GitIgnoreGenerator from './components/GitIgnoreGenerator';
+import ReadmeGenerator from './components/ReadmeGenerator';
 import FeedbackForm from './components/FeedbackForm';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import CookiePolicy from './components/CookiePolicy';
@@ -80,6 +81,8 @@ function AppContent() {
         return <CepGenerator />;
       case 'gitignore-generator':
         return <GitIgnoreGenerator />;
+      case 'readme-generator':
+        return <ReadmeGenerator />;
       case 'feedback':
         return <FeedbackForm />;
       case 'privacy':

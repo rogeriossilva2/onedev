@@ -52,6 +52,7 @@ const DEFAULT_TOOLS: ToolUsage[] = [
   { id: 'company-generator', name: 'Gerador de Empresa', uses: 0, lastUsed: null },
   { id: 'cep-generator', name: 'Gerador de CEP', uses: 0, lastUsed: null },
   { id: 'gitignore-generator', name: 'Gerador .gitignore', uses: 0, lastUsed: null },
+  { id: 'readme-generator', name: 'Gerador README.md', uses: 0, lastUsed: null },
   { id: 'imc-calculator', name: 'Calculadora de IMC', uses: 0, lastUsed: null },
   { id: 'fake-rest-api', name: 'Gerador REST API Fake', uses: 0, lastUsed: null },
 ];
