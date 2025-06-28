@@ -27,42 +27,24 @@ import {
 } from 'lucide-react';
 
 interface IpInfo {
-  ip: string;
-  version: string;
-  city: string;
-  region: string;
-  region_code: string;
+  query: string;
+  status: string;
   country: string;
-  country_name: string;
-  country_code: string;
-  country_code_iso3: string;
-  country_capital: string;
-  country_tld: string;
-  continent_code: string;
-  in_eu: boolean;
-  postal: string;
-  latitude: number;
-  longitude: number;
+  countryCode: string;
+  region: string;
+  regionName: string;
+  city: string;
+  zip: string;
+  lat: number;
+  lon: number;
   timezone: string;
-  utc_offset: string;
-  country_calling_code: string;
-  currency: string;
-  currency_name: string;
-  languages: string;
-  country_area: number;
-  country_population: number;
-  asn: string;
+  isp: string;
   org: string;
-  hostname?: string;
-  threat?: {
-    is_tor: boolean;
-    is_proxy: boolean;
-    is_anonymous: boolean;
-    is_known_attacker: boolean;
-    is_known_abuser: boolean;
-    is_threat: boolean;
-    is_bogon: boolean;
-  };
+  as: string;
+  reverse?: string;
+  mobile?: boolean;
+  proxy?: boolean;
+  hosting?: boolean;
 }
 
 interface DetectionResult {
@@ -90,7 +72,7 @@ const IpDetector: React.FC = () => {
     
     try {
       const startTime = Date.now();
-      const response = await fetch('https://ipapi.co/json/');
+      const response = await fetch('http://ip-api.com/json/?fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,query,reverse,mobile,proxy,hosting');
       const responseTime = Date.now() - startTime;
       
       if (!response.ok) {
@@ -99,7 +81,7 @@ const IpDetector: React.FC = () => {
       
       const data: IpInfo = await response.json();
       
-      if (data.ip) {
+      if (data.status === 'success' && data.query) {
         const result: DetectionResult = {
           ip: data,
           detectedAt: new Date(),
@@ -111,14 +93,14 @@ const IpDetector: React.FC = () => {
         
         // Adicionar ao histórico se não for o mesmo IP
         setHistory(prev => {
-          const exists = prev.some(item => item.ip.ip === data.ip);
+          const exists = prev.some(item => item.ip.query === data.query);
           if (!exists) {
             return [result, ...prev.slice(0, 9)]; // Manter apenas os 10 mais recentes
           }
           return prev;
         });
       } else {
-        throw new Error('Dados de IP inválidos recebidos');
+        throw new Error(data.status === 'fail' ? 'Falha ao detectar IP' : 'Dados de IP inválidos recebidos');
       }
     } catch (error) {
       console.error('Erro ao detectar IP:', error);
@@ -149,7 +131,7 @@ const IpDetector: React.FC = () => {
     
     try {
       const startTime = Date.now();
-      const response = await fetch(`https://ipapi.co/${searchIp}/json/`);
+      const response = await fetch(`http://ip-api.com/json/${searchIp}?fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,query,reverse,mobile,proxy,hosting`);
       const responseTime = Date.now() - startTime;
       
       if (!response.ok) {
@@ -158,7 +140,7 @@ const IpDetector: React.FC = () => {
       
       const data: IpInfo = await response.json();
       
-      if (data.ip) {
+      if (data.status === 'success' && data.query) {
         const result: DetectionResult = {
           ip: data,
           detectedAt: new Date(),
@@ -170,14 +152,14 @@ const IpDetector: React.FC = () => {
         
         // Adicionar ao histórico
         setHistory(prev => {
-          const exists = prev.some(item => item.ip.ip === data.ip);
+          const exists = prev.some(item => item.ip.query === data.query);
           if (!exists) {
             return [result, ...prev.slice(0, 9)];
           }
           return prev;
         });
       } else {
-        throw new Error('IP não encontrado ou dados inválidos');
+        throw new Error(data.status === 'fail' ? 'IP não encontrado ou dados inválidos' : 'Erro ao buscar IP');
       }
     } catch (error) {
       console.error('Erro ao buscar IP:', error);
@@ -214,7 +196,7 @@ const IpDetector: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `ip-info-${data.ip.ip.replace(/[:.]/g, '-')}-${Date.now()}.json`;
+    link.download = `ip-info-${data.ip.query.replace(/[:.]/g, '-')}-${Date.now()}.json`;
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -271,17 +253,17 @@ const IpDetector: React.FC = () => {
             <div className="flex items-center gap-3">
               <Hash className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               <div>
-                <div className="font-mono text-xl font-bold text-blue-900 dark:text-blue-100">{ip.ip}</div>
+                <div className="font-mono text-xl font-bold text-blue-900 dark:text-blue-100">{ip.query}</div>
                 <div className="text-sm text-blue-700 dark:text-blue-300">
-                  {getIpVersion(ip.ip)} • {ip.version}
+                  {getIpVersion(ip.query)}
                 </div>
               </div>
             </div>
             <button
-              onClick={() => copyToClipboard(ip.ip, `ip-${ip.ip}`)}
+              onClick={() => copyToClipboard(ip.query, `ip-${ip.query}`)}
               className="p-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors"
             >
-              {copiedField === `ip-${ip.ip}` ? (
+              {copiedField === `ip-${ip.query}` ? (
                 <CheckCircle className="w-5 h-5 text-green-600" />
               ) : (
                 <Copy className="w-5 h-5" />
@@ -305,12 +287,12 @@ const IpDetector: React.FC = () => {
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">País:</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-900 dark:text-gray-100">{ip.country_name}</span>
+                  <span className="text-sm text-gray-900 dark:text-gray-100">{ip.country}</span>
                   <button
-                    onClick={() => copyToClipboard(ip.country_name, `country-${ip.ip}`)}
+                    onClick={() => copyToClipboard(ip.country, `country-${ip.query}`)}
                     className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                   >
-                    {copiedField === `country-${ip.ip}` ? (
+                    {copiedField === `country-${ip.query}` ? (
                       <CheckCircle className="w-3 h-3 text-green-600" />
                     ) : (
                       <Copy className="w-3 h-3" />
@@ -319,19 +301,19 @@ const IpDetector: React.FC = () => {
                 </div>
               </div>
 
-              {ip.region && (
+              {ip.regionName && (
                 <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Estado/Região:</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-900 dark:text-gray-100">{ip.region}</span>
+                    <span className="text-sm text-gray-900 dark:text-gray-100">{ip.regionName}</span>
                     <button
-                      onClick={() => copyToClipboard(ip.region, `region-${ip.ip}`)}
+                      onClick={() => copyToClipboard(ip.regionName, `region-${ip.query}`)}
                       className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     >
-                      {copiedField === `region-${ip.ip}` ? (
+                      {copiedField === `region-${ip.query}` ? (
                         <CheckCircle className="w-3 h-3 text-green-600" />
                       ) : (
                         <Copy className="w-3 h-3" />
@@ -350,10 +332,10 @@ const IpDetector: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-900 dark:text-gray-100">{ip.city}</span>
                     <button
-                      onClick={() => copyToClipboard(ip.city, `city-${ip.ip}`)}
+                      onClick={() => copyToClipboard(ip.city, `city-${ip.query}`)}
                       className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     >
-                      {copiedField === `city-${ip.ip}` ? (
+                      {copiedField === `city-${ip.query}` ? (
                         <CheckCircle className="w-3 h-3 text-green-600" />
                       ) : (
                         <Copy className="w-3 h-3" />
@@ -363,19 +345,19 @@ const IpDetector: React.FC = () => {
                 </div>
               )}
 
-              {ip.postal && (
+              {ip.zip && (
                 <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
                   <div className="flex items-center gap-2">
                     <Hash className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">CEP:</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-900 dark:text-gray-100">{ip.postal}</span>
+                    <span className="text-sm text-gray-900 dark:text-gray-100">{ip.zip}</span>
                     <button
-                      onClick={() => copyToClipboard(ip.postal, `postal-${ip.ip}`)}
+                      onClick={() => copyToClipboard(ip.zip, `postal-${ip.query}`)}
                       className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     >
-                      {copiedField === `postal-${ip.ip}` ? (
+                      {copiedField === `postal-${ip.query}` ? (
                         <CheckCircle className="w-3 h-3 text-green-600" />
                       ) : (
                         <Copy className="w-3 h-3" />
@@ -394,21 +376,21 @@ const IpDetector: React.FC = () => {
             </h4>
             
             <div className="space-y-3">
-              {ip.org && (
+              {ip.isp && (
                 <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
                   <div className="flex items-center gap-2">
                     <Building className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Provedor:</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-900 dark:text-gray-100 text-right max-w-48 truncate" title={ip.org}>
-                      {ip.org}
+                    <span className="text-sm text-gray-900 dark:text-gray-100 text-right max-w-48 truncate" title={ip.isp}>
+                      {ip.isp}
                     </span>
                     <button
-                      onClick={() => copyToClipboard(ip.org, `org-${ip.ip}`)}
+                      onClick={() => copyToClipboard(ip.isp, `isp-${ip.query}`)}
                       className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     >
-                      {copiedField === `org-${ip.ip}` ? (
+                      {copiedField === `isp-${ip.query}` ? (
                         <CheckCircle className="w-3 h-3 text-green-600" />
                       ) : (
                         <Copy className="w-3 h-3" />
@@ -418,19 +400,19 @@ const IpDetector: React.FC = () => {
                 </div>
               )}
 
-              {ip.asn && (
+              {ip.as && (
                 <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
                   <div className="flex items-center gap-2">
                     <Hash className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">ASN:</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-900 dark:text-gray-100">{ip.asn}</span>
+                    <span className="text-sm text-gray-900 dark:text-gray-100">{ip.as}</span>
                     <button
-                      onClick={() => copyToClipboard(ip.asn, `asn-${ip.ip}`)}
+                      onClick={() => copyToClipboard(ip.as, `asn-${ip.query}`)}
                       className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     >
-                      {copiedField === `asn-${ip.ip}` ? (
+                      {copiedField === `asn-${ip.query}` ? (
                         <CheckCircle className="w-3 h-3 text-green-600" />
                       ) : (
                         <Copy className="w-3 h-3" />
@@ -440,21 +422,45 @@ const IpDetector: React.FC = () => {
                 </div>
               )}
 
-              {ip.hostname && (
+              {ip.org && (
+                <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <Building className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Organização:</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-900 dark:text-gray-100 text-right max-w-48 truncate" title={ip.org}>
+                      {ip.org}
+                    </span>
+                    <button
+                      onClick={() => copyToClipboard(ip.org, `org-${ip.query}`)}
+                      className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                    >
+                      {copiedField === `org-${ip.query}` ? (
+                        <CheckCircle className="w-3 h-3 text-green-600" />
+                      ) : (
+                        <Copy className="w-3 h-3" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {ip.reverse && (
                 <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
                   <div className="flex items-center gap-2">
                     <Globe className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Hostname:</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-900 dark:text-gray-100 text-right max-w-48 truncate" title={ip.hostname}>
-                      {ip.hostname}
+                    <span className="text-sm text-gray-900 dark:text-gray-100 text-right max-w-48 truncate" title={ip.reverse}>
+                      {ip.reverse}
                     </span>
                     <button
-                      onClick={() => copyToClipboard(ip.hostname, `hostname-${ip.ip}`)}
+                      onClick={() => copyToClipboard(ip.reverse, `hostname-${ip.query}`)}
                       className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     >
-                      {copiedField === `hostname-${ip.ip}` ? (
+                      {copiedField === `hostname-${ip.query}` ? (
                         <CheckCircle className="w-3 h-3 text-green-600" />
                       ) : (
                         <Copy className="w-3 h-3" />
@@ -480,12 +486,12 @@ const IpDetector: React.FC = () => {
                 <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Latitude:</span>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-900 dark:text-gray-100 font-mono">{ip.latitude}</span>
+                    <span className="text-sm text-gray-900 dark:text-gray-100 font-mono">{ip.lat}</span>
                     <button
-                      onClick={() => copyToClipboard(ip.latitude.toString(), `lat-${ip.ip}`)}
+                      onClick={() => copyToClipboard(ip.lat.toString(), `lat-${ip.query}`)}
                       className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     >
-                      {copiedField === `lat-${ip.ip}` ? (
+                      {copiedField === `lat-${ip.query}` ? (
                         <CheckCircle className="w-3 h-3 text-green-600" />
                       ) : (
                         <Copy className="w-3 h-3" />
@@ -497,12 +503,12 @@ const IpDetector: React.FC = () => {
                 <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Longitude:</span>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-900 dark:text-gray-100 font-mono">{ip.longitude}</span>
+                    <span className="text-sm text-gray-900 dark:text-gray-100 font-mono">{ip.lon}</span>
                     <button
-                      onClick={() => copyToClipboard(ip.longitude.toString(), `lng-${ip.ip}`)}
+                      onClick={() => copyToClipboard(ip.lon.toString(), `lng-${ip.query}`)}
                       className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     >
-                      {copiedField === `lng-${ip.ip}` ? (
+                      {copiedField === `lng-${ip.query}` ? (
                         <CheckCircle className="w-3 h-3 text-green-600" />
                       ) : (
                         <Copy className="w-3 h-3" />
@@ -513,7 +519,7 @@ const IpDetector: React.FC = () => {
 
                 <div className="p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg">
                   <a
-                    href={`https://www.google.com/maps?q=${ip.latitude},${ip.longitude}`}
+                    href={`https://www.google.com/maps?q=${ip.lat},${ip.lon}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 text-blue-700 dark:text-blue-300 hover:text-blue-900 dark:hover:text-blue-100 transition-colors text-sm"
@@ -537,27 +543,10 @@ const IpDetector: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-900 dark:text-gray-100">{ip.timezone}</span>
                     <button
-                      onClick={() => copyToClipboard(ip.timezone, `timezone-${ip.ip}`)}
+                      onClick={() => copyToClipboard(ip.timezone, `timezone-${ip.query}`)}
                       className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     >
-                      {copiedField === `timezone-${ip.ip}` ? (
-                        <CheckCircle className="w-3 h-3 text-green-600" />
-                      ) : (
-                        <Copy className="w-3 h-3" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">UTC Offset:</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-900 dark:text-gray-100 font-mono">{ip.utc_offset}</span>
-                    <button
-                      onClick={() => copyToClipboard(ip.utc_offset, `utc-${ip.ip}`)}
-                      className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                    >
-                      {copiedField === `utc-${ip.ip}` ? (
+                      {copiedField === `timezone-${ip.query}` ? (
                         <CheckCircle className="w-3 h-3 text-green-600" />
                       ) : (
                         <Copy className="w-3 h-3" />
@@ -581,22 +570,12 @@ const IpDetector: React.FC = () => {
             <div className="space-y-3">
               <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Código ISO:</span>
-                <span className="text-sm text-gray-900 dark:text-gray-100">{ip.country_code}</span>
+                <span className="text-sm text-gray-900 dark:text-gray-100">{ip.countryCode}</span>
               </div>
 
               <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Capital:</span>
-                <span className="text-sm text-gray-900 dark:text-gray-100">{ip.country_capital}</span>
-              </div>
-
-              <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Moeda:</span>
-                <span className="text-sm text-gray-900 dark:text-gray-100">{ip.currency_name} ({ip.currency})</span>
-              </div>
-
-              <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Idiomas:</span>
-                <span className="text-sm text-gray-900 dark:text-gray-100">{ip.languages}</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Região:</span>
+                <span className="text-sm text-gray-900 dark:text-gray-100">{ip.region}</span>
               </div>
             </div>
           </div>
@@ -618,41 +597,50 @@ const IpDetector: React.FC = () => {
                 <span className="text-sm text-gray-900 dark:text-gray-100">{responseTime}ms</span>
               </div>
 
-              <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">União Europeia:</span>
-                <span className={`text-sm ${ip.in_eu ? 'text-green-600 dark:text-green-400' : 'text-gray-900 dark:text-gray-100'}`}>
-                  {ip.in_eu ? 'Sim' : 'Não'}
-                </span>
-              </div>
+              {ip.mobile !== undefined && (
+                <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Móvel:</span>
+                  <span className={`text-sm ${ip.mobile ? 'text-blue-600 dark:text-blue-400' : 'text-gray-900 dark:text-gray-100'}`}>
+                    {ip.mobile ? 'Sim' : 'Não'}
+                  </span>
+                </div>
+              )}
 
-              <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Código de área:</span>
-                <span className="text-sm text-gray-900 dark:text-gray-100">+{ip.country_calling_code}</span>
-              </div>
+              {ip.proxy !== undefined && (
+                <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Proxy:</span>
+                  <span className={`text-sm ${ip.proxy ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
+                    {ip.proxy ? 'Sim' : 'Não'}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Threat Detection (se disponível) */}
-        {ip.threat && (
-          <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg">
-            <h4 className="font-semibold text-red-900 dark:text-red-100 mb-3 flex items-center gap-2">
+        {/* Security Analysis */}
+        {(ip.proxy || ip.hosting) && (
+          <div className="mt-6 p-4 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg">
+            <h4 className="font-semibold text-amber-900 dark:text-amber-100 mb-3 flex items-center gap-2">
               <AlertTriangle className="w-4 h-4" />
               Análise de Segurança
             </h4>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-              <div className={`p-2 rounded ${ip.threat.is_tor ? 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300' : 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300'}`}>
-                Tor: {ip.threat.is_tor ? 'Sim' : 'Não'}
-              </div>
-              <div className={`p-2 rounded ${ip.threat.is_proxy ? 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300' : 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300'}`}>
-                Proxy: {ip.threat.is_proxy ? 'Sim' : 'Não'}
-              </div>
-              <div className={`p-2 rounded ${ip.threat.is_threat ? 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300' : 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300'}`}>
-                Ameaça: {ip.threat.is_threat ? 'Sim' : 'Não'}
-              </div>
-              <div className={`p-2 rounded ${ip.threat.is_anonymous ? 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300' : 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300'}`}>
-                Anônimo: {ip.threat.is_anonymous ? 'Sim' : 'Não'}
-              </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+              {ip.proxy !== undefined && (
+                <div className={`p-2 rounded ${ip.proxy ? 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300' : 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300'}`}>
+                  Proxy: {ip.proxy ? 'Sim' : 'Não'}
+                </div>
+              )}
+              {ip.hosting !== undefined && (
+                <div className={`p-2 rounded ${ip.hosting ? 'bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300' : 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300'}`}>
+                  Hosting: {ip.hosting ? 'Sim' : 'Não'}
+                </div>
+              )}
+              {ip.mobile !== undefined && (
+                <div className={`p-2 rounded ${ip.mobile ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300' : 'bg-gray-100 dark:bg-gray-900/50 text-gray-800 dark:text-gray-300'}`}>
+                  Móvel: {ip.mobile ? 'Sim' : 'Não'}
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -778,17 +766,17 @@ const IpDetector: React.FC = () => {
               {history.slice(0, 5).map((item, index) => (
                 <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${getIpVersion(item.ip.ip) === 'IPv6' ? 'bg-purple-100 dark:bg-purple-900/30' : 'bg-blue-100 dark:bg-blue-900/30'}`}>
-                      {getIpVersion(item.ip.ip) === 'IPv6' ? (
+                    <div className={`p-2 rounded-lg ${getIpVersion(item.ip.query) === 'IPv6' ? 'bg-purple-100 dark:bg-purple-900/30' : 'bg-blue-100 dark:bg-blue-900/30'}`}>
+                      {getIpVersion(item.ip.query) === 'IPv6' ? (
                         <Smartphone className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                       ) : (
                         <Monitor className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                       )}
                     </div>
                     <div>
-                      <div className="font-mono text-sm font-medium text-gray-900 dark:text-gray-100">{item.ip.ip}</div>
+                      <div className="font-mono text-sm font-medium text-gray-900 dark:text-gray-100">{item.ip.query}</div>
                       <div className="text-xs text-gray-600 dark:text-gray-400">
-                        {item.ip.city}, {item.ip.country_name} • {formatDate(item.detectedAt)}
+                        {item.ip.city}, {item.ip.country} • {formatDate(item.detectedAt)}
                       </div>
                     </div>
                   </div>
@@ -801,10 +789,10 @@ const IpDetector: React.FC = () => {
                       {item.source === 'auto' ? 'Auto' : 'Manual'}
                     </span>
                     <button
-                      onClick={() => copyToClipboard(item.ip.ip, `history-${item.ip.ip}`)}
+                      onClick={() => copyToClipboard(item.ip.query, `history-${item.ip.query}`)}
                       className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     >
-                      {copiedField === `history-${item.ip.ip}` ? (
+                      {copiedField === `history-${item.ip.query}` ? (
                         <CheckCircle className="w-4 h-4 text-green-600" />
                       ) : (
                         <Copy className="w-4 h-4" />
@@ -826,7 +814,7 @@ const IpDetector: React.FC = () => {
             <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">🌍 Sobre Detecção de IP</h3>
             <div className="text-blue-800 dark:text-blue-300 leading-relaxed space-y-3">
               <p>
-                Este detector utiliza a API ipapi.co para fornecer informações precisas sobre endereços IP, 
+                Este detector utiliza a API ip-api.com para fornecer informações precisas sobre endereços IP, 
                 incluindo localização geográfica, provedor de internet e dados de segurança.
               </p>
               
