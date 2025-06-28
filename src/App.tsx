@@ -6,6 +6,7 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import CookiePolicy from './components/CookiePolicy';
 import LGPDInfo from './components/LGPDInfo';
 import About from './components/About';
+import FeedbackForm from './components/FeedbackForm';
 
 import CookieModal from './components/CookieModal';
 import CookieSettingsModal, { CookieSettings } from './components/CookieSettings';
@@ -75,6 +76,8 @@ function App() {
         return <Dashboard />;
       case 'cep-generator':
         return <CepGenerator />;
+      case 'feedback':
+        return <FeedbackForm />;
       case 'privacy':
         return <PrivacyPolicy />;
       case 'cookies':

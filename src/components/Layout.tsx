@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, Search, Calculator, Palette, Code, Settings, Home, CreditCard, Code2, Link, FileText, BarChart3, Shield, Scale, Cookie, Heart, Cog, Hash, QrCode, GitBranch, Monitor, Key, Lock, Type, Smartphone, User, Server, Building2, MapPin, Activity } from 'lucide-react';
+import { Menu, X, Search, Calculator, Palette, Code, Settings, Home, CreditCard, Code2, Link, FileText, BarChart3, Shield, Scale, Cookie, Heart, Cog, Hash, QrCode, GitBranch, Monitor, Key, Lock, Type, Smartphone, User, Server, Building2, MapPin, Activity, MessageSquare } from 'lucide-react';
 import CookieSettingsModal, { CookieSettings } from './CookieSettings';
 import { useAnalytics } from '../hooks/useAnalytics';
 
@@ -33,6 +33,10 @@ const Layout: React.FC<LayoutProps> = ({ children, currentTool = 'seo' }) => {
     { id: 'lgpd', name: 'Conformidade LGPD', icon: Scale, active: currentTool === 'lgpd' },
     { id: 'changelog', name: 'Changelog', icon: GitBranch, active: currentTool === 'changelog' },
     { id: 'about', name: 'Sobre o OneDev', icon: Heart, active: currentTool === 'about' },
+  ];
+
+  const supportItems = [
+    { id: 'feedback', name: 'Bugs & Sugestões', icon: MessageSquare, active: currentTool === 'feedback' },
   ];
 
   const handleMenuClick = (toolId: string) => {
@@ -102,6 +106,34 @@ const Layout: React.FC<LayoutProps> = ({ children, currentTool = 'seo' }) => {
                   </h3>
                   <div className="space-y-2">
                     {menuItems.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <button
+                          key={item.id}
+                          onClick={() => handleMenuClick(item.id)}
+                          className={`
+                            w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
+                            ${item.active 
+                              ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' 
+                              : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                            }
+                          `}
+                        >
+                          <Icon className="w-5 h-5 mr-3 flex-shrink-0" />
+                          <span className="truncate">{item.name}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Support */}
+                <div>
+                  <h3 className="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                    Suporte
+                  </h3>
+                  <div className="space-y-2">
+                    {supportItems.map((item) => {
                       const Icon = item.icon;
                       return (
                         <button
