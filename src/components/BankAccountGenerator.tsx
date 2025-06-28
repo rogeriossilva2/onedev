@@ -308,7 +308,7 @@ const BankAccountGenerator: React.FC = () => {
     return { agency, digit };
   };
 
-  const generateAccount = (bankCode: string, accountType: 'corrente' | 'poupanca'): { account: string; digit: string } => {
+  const generateAccountNumberAndDigit = (bankCode: string, accountType: 'corrente' | 'poupanca'): { account: string; digit: string } => {
     let account: string;
     
     // Diferentes padrões de conta baseados no banco e tipo
@@ -344,7 +344,7 @@ const BankAccountGenerator: React.FC = () => {
     if (!bank) return;
 
     const { agency, digit: agencyDigit } = generateAgency(selectedBank, selectedState);
-    const { account, digit: accountDigit } = generateAccount(selectedBank, accountType);
+    const { account, digit: accountDigit } = generateAccountNumberAndDigit(selectedBank, accountType);
     
     const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
     const lastName1 = lastNames[Math.floor(Math.random() * lastNames.length)];
