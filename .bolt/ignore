@@ -1,0 +1,23 @@
+# Arquivos de configuração que não precisam ser analisados
+package-lock.json
+.gitignore
+tsconfig.json
+tsconfig.app.json
+tsconfig.node.json
+vite.config.ts
+postcss.config.js
+tailwind.config.js
+eslint.config.js
+
+# Arquivos de configuração do Bolt
+.bolt/prompt
+.bolt/config.json
+
+# Arquivos de tipos
+src/vite-env.d.ts
+
+# CSS básico (só usa Tailwind)
+src/index.css
+
+# Arquivo principal simples
+src/main.tsx
