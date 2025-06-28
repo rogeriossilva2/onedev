@@ -56,6 +56,7 @@ const DEFAULT_TOOLS: ToolUsage[] = [
   { id: 'readme-generator', name: 'Gerador README.md', uses: 0, lastUsed: null },
   { id: 'composer-generator', name: 'Gerador Composer', uses: 0, lastUsed: null },
   { id: 'slug-formatter', name: 'Slug Formatter', uses: 0, lastUsed: null },
+  { id: 'ip-detector', name: 'Detector de IP', uses: 0, lastUsed: null },
   { id: 'imc-calculator', name: 'Calculadora de IMC', uses: 0, lastUsed: null },
   { id: 'fake-rest-api', name: 'Gerador REST API Fake', uses: 0, lastUsed: null },
 ];

@@ -8,6 +8,7 @@ import GitIgnoreGenerator from './components/GitIgnoreGenerator';
 import ReadmeGenerator from './components/ReadmeGenerator';
 import ComposerGenerator from './components/ComposerGenerator';
 import SlugFormatter from './components/SlugFormatter';
+import IpDetector from './components/IpDetector';
 import FeedbackForm from './components/FeedbackForm';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import CookiePolicy from './components/CookiePolicy';
@@ -92,6 +93,8 @@ function AppContent() {
         return <ComposerGenerator />;
       case 'slug-formatter':
         return <SlugFormatter />;
+      case 'ip-detector':
+        return <IpDetector />;
       case 'feedback':
         return <FeedbackForm />;
       case 'privacy':

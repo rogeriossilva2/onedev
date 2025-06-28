@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, Search, Calculator, Palette, Code, Settings, Home, CreditCard, Code2, Link, FileText, BarChart3, Shield, Scale, Cookie, Heart, Cog, Hash, QrCode, GitBranch, Monitor, Key, Lock, Type, Smartphone, User, Server, Building2, MapPin, Activity, MessageSquare, FileX, Wand2, Package } from 'lucide-react';
+import { Menu, X, Search, Calculator, Palette, Code, Settings, Home, CreditCard, Code2, Link, FileText, BarChart3, Shield, Scale, Cookie, Heart, Cog, Hash, QrCode, GitBranch, Monitor, Key, Lock, Type, Smartphone, User, Server, Building2, MapPin, Activity, MessageSquare, FileX, Wand2, Package, Globe } from 'lucide-react';
 import CookieSettingsModal, { CookieSettings } from './CookieSettings';
 import ThemeToggle from './ThemeToggle';
 import { useAnalytics } from '../hooks/useAnalytics';
@@ -19,6 +19,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentTool = 'seo' }) => {
     { id: 'dashboard', name: 'Dashboard', icon: BarChart3, active: currentTool === 'dashboard' },
     { id: 'seo', name: 'Gerador de SEO', icon: Search, active: currentTool === 'seo' },
     { id: 'slug-formatter', name: 'Slug Formatter', icon: Link, active: currentTool === 'slug-formatter' },
+    { id: 'ip-detector', name: 'Detector de IP', icon: Globe, active: currentTool === 'ip-detector' },
     { id: 'gitignore-generator', name: 'Gerador .gitignore', icon: FileX, active: currentTool === 'gitignore-generator' },
     { id: 'readme-generator', name: 'Gerador README.md', icon: Wand2, active: currentTool === 'readme-generator' },
     { id: 'composer-generator', name: 'Gerador Composer', icon: Package, active: currentTool === 'composer-generator' },
