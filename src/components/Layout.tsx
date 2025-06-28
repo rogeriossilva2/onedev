@@ -18,6 +18,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentTool = 'seo' }) => {
   const menuItems = [
     { id: 'dashboard', name: 'Dashboard', icon: BarChart3, active: currentTool === 'dashboard' },
     { id: 'seo', name: 'Gerador de SEO', icon: Search, active: currentTool === 'seo' },
+    { id: 'slug-formatter', name: 'Slug Formatter', icon: Link, active: currentTool === 'slug-formatter' },
     { id: 'gitignore-generator', name: 'Gerador .gitignore', icon: FileX, active: currentTool === 'gitignore-generator' },
     { id: 'readme-generator', name: 'Gerador README.md', icon: Wand2, active: currentTool === 'readme-generator' },
     { id: 'composer-generator', name: 'Gerador Composer', icon: Package, active: currentTool === 'composer-generator' },

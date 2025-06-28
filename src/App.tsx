@@ -7,6 +7,7 @@ import BankAccountGenerator from './components/BankAccountGenerator';
 import GitIgnoreGenerator from './components/GitIgnoreGenerator';
 import ReadmeGenerator from './components/ReadmeGenerator';
 import ComposerGenerator from './components/ComposerGenerator';
+import SlugFormatter from './components/SlugFormatter';
 import FeedbackForm from './components/FeedbackForm';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import CookiePolicy from './components/CookiePolicy';
@@ -89,6 +90,8 @@ function AppContent() {
         return <ReadmeGenerator />;
       case 'composer-generator':
         return <ComposerGenerator />;
+      case 'slug-formatter':
+        return <SlugFormatter />;
       case 'feedback':
         return <FeedbackForm />;
       case 'privacy':

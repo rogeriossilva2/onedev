@@ -55,6 +55,7 @@ const DEFAULT_TOOLS: ToolUsage[] = [
   { id: 'gitignore-generator', name: 'Gerador .gitignore', uses: 0, lastUsed: null },
   { id: 'readme-generator', name: 'Gerador README.md', uses: 0, lastUsed: null },
   { id: 'composer-generator', name: 'Gerador Composer', uses: 0, lastUsed: null },
+  { id: 'slug-formatter', name: 'Slug Formatter', uses: 0, lastUsed: null },
   { id: 'imc-calculator', name: 'Calculadora de IMC', uses: 0, lastUsed: null },
   { id: 'fake-rest-api', name: 'Gerador REST API Fake', uses: 0, lastUsed: null },
 ];
