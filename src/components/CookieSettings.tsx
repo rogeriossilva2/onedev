@@ -36,9 +36,9 @@ const CookieSettingsModal: React.FC<CookieSettingsProps> = ({
       name: 'Cookies Essenciais',
       description: 'Necessários para o funcionamento básico do site',
       icon: Shield,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
-      borderColor: 'border-green-200',
+      color: 'text-green-600 dark:text-green-400',
+      bgColor: 'bg-green-50 dark:bg-green-900/30',
+      borderColor: 'border-green-200 dark:border-green-800',
       required: true,
       details: [
         'Funcionamento básico da aplicação',
@@ -52,9 +52,9 @@ const CookieSettingsModal: React.FC<CookieSettingsProps> = ({
       name: 'Cookies de Análise',
       description: 'Contabilizam sessões e dados estatísticos (dados locais)',
       icon: BarChart3,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
-      borderColor: 'border-blue-200',
+      color: 'text-blue-600 dark:text-blue-400',
+      bgColor: 'bg-blue-50 dark:bg-blue-900/30',
+      borderColor: 'border-blue-200 dark:border-blue-800',
       required: false,
       details: [
         'Estatísticas de sessão',
@@ -67,9 +67,9 @@ const CookieSettingsModal: React.FC<CookieSettingsProps> = ({
       name: 'Cookies de Preferências',
       description: 'Salvam suas configurações personalizadas',
       icon: Palette,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
-      borderColor: 'border-purple-200',
+      color: 'text-purple-600 dark:text-purple-400',
+      bgColor: 'bg-purple-50 dark:bg-purple-900/30',
+      borderColor: 'border-purple-200 dark:border-purple-800',
       required: false,
       details: [
         'Tema claro/escuro',
@@ -82,9 +82,9 @@ const CookieSettingsModal: React.FC<CookieSettingsProps> = ({
       name: 'Cookies Funcionais',
       description: 'Melhoram a experiência de uso',
       icon: Clock,
-      color: 'text-amber-600',
-      bgColor: 'bg-amber-50',
-      borderColor: 'border-amber-200',
+      color: 'text-amber-600 dark:text-amber-400',
+      bgColor: 'bg-amber-50 dark:bg-amber-900/30',
+      borderColor: 'border-amber-200 dark:border-amber-800',
       required: false,
       details: [
         'Última ferramenta utilizada',
@@ -98,35 +98,35 @@ const CookieSettingsModal: React.FC<CookieSettingsProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" />
       
-      <div className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/20 dark:border-gray-700/20">
         <div className="p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-amber-100 rounded-lg">
-                <Cookie className="w-6 h-6 text-amber-600" />
+              <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+                <Cookie className="w-6 h-6 text-amber-600 dark:text-amber-400" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                 Configurações de Cookies
               </h3>
             </div>
             <button
               onClick={onClose}
-              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+              className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Privacy Notice */}
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+          <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6">
             <div className="flex items-start gap-3">
-              <Shield className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+              <Shield className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
               <div>
-                <h4 className="text-sm font-medium text-green-900 mb-1">
+                <h4 className="text-sm font-medium text-green-900 dark:text-green-100 mb-1">
                   🔒 Privacidade Garantida
                 </h4>
-                <p className="text-xs text-green-700 leading-relaxed">
+                <p className="text-xs text-green-700 dark:text-green-300 leading-relaxed">
                   Todos os cookies são armazenados localmente no seu navegador. 
                   Nenhum dado é enviado para nossos servidores ou terceiros.
                 </p>
@@ -135,14 +135,14 @@ const CookieSettingsModal: React.FC<CookieSettingsProps> = ({
           </div>
 
           {/* Mandatory Notice */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
             <div className="flex items-start gap-3">
-              <Info className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+              <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
               <div>
-                <h4 className="text-sm font-medium text-blue-900 mb-1">
+                <h4 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-1">
                   📊 Contagem Obrigatória
                 </h4>
-                <p className="text-xs text-blue-700 leading-relaxed">
+                <p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
                   A contagem de uso das ferramentas é sempre ativa para melhorar sua experiência. 
                   Esta funcionalidade não pode ser desabilitada, mas os dados permanecem apenas no seu navegador.
                 </p>
@@ -164,22 +164,22 @@ const CookieSettingsModal: React.FC<CookieSettingsProps> = ({
                       <Icon className={`w-5 h-5 ${type.color} mt-0.5 flex-shrink-0`} />
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <h4 className="text-sm font-medium text-gray-900">
+                          <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
                             {type.name}
                           </h4>
                           {type.required && (
-                            <span className="px-2 py-0.5 bg-gray-200 text-gray-700 text-xs rounded-full">
+                            <span className="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded-full">
                               Obrigatório
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-600 mb-2">
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
                           {type.description}
                         </p>
-                        <ul className="text-xs text-gray-500 space-y-1">
+                        <ul className="text-xs text-gray-500 dark:text-gray-500 space-y-1">
                           {type.details.map((detail, index) => (
                             <li key={index} className="flex items-center gap-1">
-                              <span className="w-1 h-1 bg-gray-400 rounded-full" />
+                              <span className="w-1 h-1 bg-gray-400 dark:bg-gray-500 rounded-full" />
                               {detail}
                             </li>
                           ))}
@@ -199,7 +199,7 @@ const CookieSettingsModal: React.FC<CookieSettingsProps> = ({
                           disabled={type.required}
                           className="sr-only peer"
                         />
-                        <div className={`relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 ${type.required ? 'opacity-50 cursor-not-allowed' : ''}`} />
+                        <div className={`relative w-11 h-6 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 dark:after:border-gray-600 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 ${type.required ? 'opacity-50 cursor-not-allowed' : ''}`} />
                       </label>
                     </div>
                   </div>
@@ -227,7 +227,7 @@ const CookieSettingsModal: React.FC<CookieSettingsProps> = ({
             </button>
           </div>
 
-          <p className="text-xs text-gray-500 mt-4 text-center">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-4 text-center">
             A contagem de uso das ferramentas permanece sempre ativa. Suas outras preferências são salvas localmente.
           </p>
         </div>
