@@ -6,6 +6,7 @@ import CepGenerator from './components/CepGenerator';
 import BankAccountGenerator from './components/BankAccountGenerator';
 import GitIgnoreGenerator from './components/GitIgnoreGenerator';
 import ReadmeGenerator from './components/ReadmeGenerator';
+import ComposerGenerator from './components/ComposerGenerator';
 import FeedbackForm from './components/FeedbackForm';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import CookiePolicy from './components/CookiePolicy';
@@ -86,6 +87,8 @@ function AppContent() {
         return <GitIgnoreGenerator />;
       case 'readme-generator':
         return <ReadmeGenerator />;
+      case 'composer-generator':
+        return <ComposerGenerator />;
       case 'feedback':
         return <FeedbackForm />;
       case 'privacy':
