@@ -20,6 +20,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentTool = 'seo' }) => {
     { id: 'seo', name: 'Gerador de SEO', icon: Search, active: currentTool === 'seo' },
     { id: 'gitignore-generator', name: 'Gerador .gitignore', icon: FileX, active: currentTool === 'gitignore-generator' },
     { id: 'readme-generator', name: 'Gerador README.md', icon: Wand2, active: currentTool === 'readme-generator' },
+    { id: 'bank-account-generator', name: 'Gerador de Conta Bancária', icon: CreditCard, active: currentTool === 'bank-account-generator' },
     { id: 'device-generator', name: 'Gerador de Dispositivo', icon: Smartphone, active: currentTool === 'device-generator' },
     
     { id: 'person-generator', name: 'Gerador de Pessoa', icon: User, active: currentTool === 'person-generator' },

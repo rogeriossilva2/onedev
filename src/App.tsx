@@ -3,6 +3,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import CepGenerator from './components/CepGenerator';
+import BankAccountGenerator from './components/BankAccountGenerator';
 import GitIgnoreGenerator from './components/GitIgnoreGenerator';
 import ReadmeGenerator from './components/ReadmeGenerator';
 import FeedbackForm from './components/FeedbackForm';
@@ -79,6 +80,8 @@ function AppContent() {
         return <Dashboard />;
       case 'cep-generator':
         return <CepGenerator />;
+      case 'bank-account-generator':
+        return <BankAccountGenerator />;
       case 'gitignore-generator':
         return <GitIgnoreGenerator />;
       case 'readme-generator':
