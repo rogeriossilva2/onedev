@@ -29,7 +29,8 @@ import {
   Shield,
   User,
   CreditCard,
-  Navigation
+  Navigation,
+  Settings
 } from 'lucide-react';
 
 interface VehicleData {
