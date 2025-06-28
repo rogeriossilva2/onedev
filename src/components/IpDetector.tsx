@@ -72,7 +72,7 @@ const IpDetector: React.FC = () => {
     
     try {
       const startTime = Date.now();
-      const response = await fetch('http://ip-api.com/json/?fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,query,reverse,mobile,proxy,hosting');
+      const response = await fetch('https://ip-api.com/json/?fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,query,reverse,mobile,proxy,hosting');
       const responseTime = Date.now() - startTime;
       
       if (!response.ok) {
