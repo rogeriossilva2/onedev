@@ -24,6 +24,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentTool = 'seo' }) => {
     { id: 'readme-generator', name: 'Gerador README.md', icon: Wand2, active: currentTool === 'readme-generator' },
     { id: 'composer-generator', name: 'Gerador Composer', icon: Package, active: currentTool === 'composer-generator' },
     { id: 'brazilian-documents', name: 'Documentos Brasileiros', icon: CreditCard, active: currentTool === 'brazilian-documents' },
+    { id: 'vehicle-generator', name: 'Gerador de Veículos', icon: Car, active: currentTool === 'vehicle-generator' },
     { id: 'bank-account-generator', name: 'Gerador de Conta Bancária', icon: Building2, active: currentTool === 'bank-account-generator' },
     { id: 'device-generator', name: 'Gerador de Dispositivo', icon: Smartphone, active: currentTool === 'device-generator' },
     

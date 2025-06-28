@@ -10,6 +10,7 @@ import ComposerGenerator from './components/ComposerGenerator';
 import SlugFormatter from './components/SlugFormatter';
 import IpDetector from './components/IpDetector';
 import BrazilianDocumentsGenerator from './components/BrazilianDocumentsGenerator';
+import VehicleGenerator from './components/VehicleGenerator';
 import FeedbackForm from './components/FeedbackForm';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import CookiePolicy from './components/CookiePolicy';
@@ -98,6 +99,8 @@ function AppContent() {
         return <IpDetector />;
       case 'brazilian-documents':
         return <BrazilianDocumentsGenerator />;
+      case 'vehicle-generator':
+        return <VehicleGenerator />;
       case 'feedback':
         return <FeedbackForm />;
       case 'privacy':

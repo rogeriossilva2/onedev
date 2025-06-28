@@ -58,6 +58,7 @@ const DEFAULT_TOOLS: ToolUsage[] = [
   { id: 'slug-formatter', name: 'Slug Formatter', uses: 0, lastUsed: null },
   { id: 'ip-detector', name: 'Detector de IP', uses: 0, lastUsed: null },
   { id: 'brazilian-documents', name: 'Documentos Brasileiros', uses: 0, lastUsed: null },
+  { id: 'vehicle-generator', name: 'Gerador de Veículos', uses: 0, lastUsed: null },
   { id: 'imc-calculator', name: 'Calculadora de IMC', uses: 0, lastUsed: null },
   { id: 'fake-rest-api', name: 'Gerador REST API Fake', uses: 0, lastUsed: null },
 ];
