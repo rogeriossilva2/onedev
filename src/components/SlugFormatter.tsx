@@ -16,7 +16,9 @@ import {
   ArrowRight,
   Download,
   Upload,
-  Trash2
+  Trash2,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 
 interface SlugOptions {
@@ -76,6 +78,7 @@ const SlugFormatter: React.FC = () => {
   const [bulkInput, setBulkInput] = useState('');
   const [activeTab, setActiveTab] = useState<'single' | 'bulk'>('single');
   const [customReplacement, setCustomReplacement] = useState({ from: '', to: '' });
+  const [expandedResults, setExpandedResults] = useState<Set<number>>(new Set());
 
   const stopWords = [
     'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from', 'has', 'he', 'in', 'is', 'it',
@@ -255,6 +258,18 @@ const SlugFormatter: React.FC = () => {
     setResults([]);
   };
 
+  const toggleResultExpansion = (index: number) => {
+    setExpandedResults(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+      }
+      return newSet;
+    });
+  };
+
   // Auto-generate on input change for single mode
   useEffect(() => {
     if (activeTab === 'single' && inputText.trim()) {
@@ -285,50 +300,50 @@ const SlugFormatter: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="text-center mb-8">
+      <div className="text-center mb-6 sm:mb-8">
         <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
-            <Link className="w-8 h-8 text-white" />
+          <div className="p-2 sm:p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
+            <Link className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Slug Formatter
           </h1>
         </div>
-        <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">
+        <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg max-w-2xl mx-auto px-4">
           Transforme texto comum em URLs amigáveis e identificadores limpos
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
         {/* Input and Configuration */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="xl:col-span-2 space-y-6">
           {/* Tabs */}
-          <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/20 dark:border-gray-700/20">
-            <div className="flex gap-4 mb-6">
+          <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-6 border border-white/20 dark:border-gray-700/20">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mb-6">
               <button
                 onClick={() => setActiveTab('single')}
-                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+                className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
                   activeTab === 'single'
                     ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
                     : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                 }`}
               >
-                <Type className="w-5 h-5" />
-                Texto Único
+                <Type className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-sm sm:text-base">Texto Único</span>
               </button>
               
               <button
                 onClick={() => setActiveTab('bulk')}
-                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+                className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
                   activeTab === 'bulk'
                     ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
                     : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                 }`}
               >
-                <Upload className="w-5 h-5" />
-                Processamento em Lote
+                <Upload className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-sm sm:text-base">Processamento em Lote</span>
               </button>
             </div>
 
@@ -344,7 +359,7 @@ const SlugFormatter: React.FC = () => {
                     onChange={(e) => setInputText(e.target.value)}
                     placeholder="Digite o texto que deseja converter em slug..."
                     rows={3}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm sm:text-base"
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     O slug é gerado automaticamente conforme você digita
@@ -365,46 +380,49 @@ const SlugFormatter: React.FC = () => {
                     onChange={(e) => setBulkInput(e.target.value)}
                     placeholder="Linha 1: Meu Primeiro Artigo&#10;Linha 2: Como Fazer URLs Amigáveis&#10;Linha 3: Guia Completo de SEO"
                     rows={6}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm sm:text-base"
                   />
                 </div>
                 
                 <button
                   onClick={handleBulkGenerate}
                   disabled={!bulkInput.trim()}
-                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm sm:text-base"
                 >
-                  <Zap className="w-5 h-5" />
+                  <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
                   Gerar Slugs em Lote
                 </button>
               </div>
             )}
 
             {/* Quick Actions */}
-            <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex flex-wrap gap-2 sm:gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
               <button
                 onClick={() => setShowOptions(!showOptions)}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm"
               >
                 {showOptions ? <EyeOff className="w-4 h-4" /> : <Settings className="w-4 h-4" />}
-                {showOptions ? 'Ocultar' : 'Configurações'}
+                <span className="hidden sm:inline">{showOptions ? 'Ocultar' : 'Configurações'}</span>
+                <span className="sm:hidden">{showOptions ? 'Ocultar' : 'Config'}</span>
               </button>
 
               <button
                 onClick={clearAll}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm"
               >
                 <Trash2 className="w-4 h-4" />
-                Limpar Tudo
+                <span className="hidden sm:inline">Limpar Tudo</span>
+                <span className="sm:hidden">Limpar</span>
               </button>
 
               {results.length > 0 && (
                 <button
                   onClick={exportResults}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors"
+                  className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors text-sm"
                 >
                   <Download className="w-4 h-4" />
-                  Exportar
+                  <span className="hidden sm:inline">Exportar</span>
+                  <span className="sm:hidden">Export</span>
                 </button>
               )}
             </div>
@@ -412,10 +430,10 @@ const SlugFormatter: React.FC = () => {
 
           {/* Configuration Options */}
           {showOptions && (
-            <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/20 dark:border-gray-700/20">
+            <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-6 border border-white/20 dark:border-gray-700/20">
               <div className="flex items-center gap-2 mb-6">
                 <Settings className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Configurações Avançadas</h2>
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-800 dark:text-gray-200">Configurações Avançadas</h2>
               </div>
 
               {/* Presets */}
@@ -423,12 +441,12 @@ const SlugFormatter: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                   Configurações Predefinidas
                 </label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
                   {presetConfigs.map((preset, index) => (
                     <button
                       key={index}
                       onClick={() => setOptions(prev => ({ ...prev, ...preset.config }))}
-                      className="p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors text-sm"
+                      className="p-2 sm:p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors text-xs sm:text-sm text-center"
                     >
                       {preset.name}
                     </button>
@@ -436,7 +454,7 @@ const SlugFormatter: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Basic Options */}
                 <div className="space-y-4">
                   <h3 className="font-semibold text-gray-900 dark:text-gray-100">Opções Básicas</h3>
@@ -448,7 +466,7 @@ const SlugFormatter: React.FC = () => {
                     <select
                       value={options.separator}
                       onChange={(e) => setOptions(prev => ({ ...prev, separator: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm"
                     >
                       <option value="-">Hífen (-)</option>
                       <option value="_">Underscore (_)</option>
@@ -469,7 +487,7 @@ const SlugFormatter: React.FC = () => {
                         maxLength: e.target.value ? parseInt(e.target.value) : null 
                       }))}
                       placeholder="Sem limite"
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm"
                     />
                   </div>
 
@@ -521,20 +539,20 @@ const SlugFormatter: React.FC = () => {
                   <h3 className="font-semibold text-gray-900 dark:text-gray-100">Substituições Personalizadas</h3>
                   
                   <div className="space-y-3">
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2">
                       <input
                         type="text"
                         value={customReplacement.from}
                         onChange={(e) => setCustomReplacement(prev => ({ ...prev, from: e.target.value }))}
                         placeholder="De"
-                        className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                        className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm"
                       />
                       <input
                         type="text"
                         value={customReplacement.to}
                         onChange={(e) => setCustomReplacement(prev => ({ ...prev, to: e.target.value }))}
                         placeholder="Para"
-                        className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                        className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm"
                       />
                       <button
                         onClick={addCustomReplacement}
@@ -547,12 +565,12 @@ const SlugFormatter: React.FC = () => {
                     <div className="space-y-2">
                       {Object.entries(options.customReplacements).map(([from, to]) => (
                         <div key={from} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-                          <span className="text-sm text-gray-700 dark:text-gray-300">
+                          <span className="text-sm text-gray-700 dark:text-gray-300 truncate">
                             "{from}" → "{to}"
                           </span>
                           <button
                             onClick={() => removeCustomReplacement(from)}
-                            className="text-red-500 hover:text-red-700 dark:hover:text-red-300"
+                            className="text-red-500 hover:text-red-700 dark:hover:text-red-300 ml-2"
                           >
                             ×
                           </button>
@@ -563,10 +581,10 @@ const SlugFormatter: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <button
                   onClick={resetOptions}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm"
                 >
                   <RotateCcw className="w-4 h-4" />
                   Restaurar Padrões
@@ -579,21 +597,21 @@ const SlugFormatter: React.FC = () => {
         {/* Results */}
         <div className="space-y-6">
           {results.length > 0 && (
-            <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/20 dark:border-gray-700/20">
+            <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-6 border border-white/20 dark:border-gray-700/20">
               <div className="flex items-center gap-2 mb-6">
                 <Hash className="w-5 h-5 text-green-600 dark:text-green-400" />
-                <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-800 dark:text-gray-200">
                   Resultados ({results.length})
                 </h2>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {results.map((result, index) => (
-                  <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-4">
                     {/* Original Text */}
                     <div className="mb-4">
                       <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Texto Original:</div>
-                      <div className="text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-800/50 p-2 rounded text-sm">
+                      <div className="text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-800/50 p-2 rounded text-sm break-words">
                         {result.original}
                       </div>
                     </div>
@@ -620,23 +638,35 @@ const SlugFormatter: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Variations */}
+                    {/* Variations - Collapsible on mobile */}
                     <div className="mb-4">
-                      <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Variações:</div>
-                      <div className="grid grid-cols-1 gap-2">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Variações:</div>
+                        <button
+                          onClick={() => toggleResultExpansion(index)}
+                          className="sm:hidden p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                        >
+                          {expandedResults.has(index) ? (
+                            <ChevronUp className="w-4 h-4" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4" />
+                          )}
+                        </button>
+                      </div>
+                      <div className={`grid grid-cols-1 gap-2 ${!expandedResults.has(index) ? 'hidden sm:grid' : ''}`}>
                         {Object.entries(result.variations).map(([type, value]) => (
                           <div key={type} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800/50 rounded">
-                            <div className="flex items-center gap-3">
-                              <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase w-16">
+                            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                              <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase w-12 sm:w-16 flex-shrink-0">
                                 {type}:
                               </span>
-                              <code className="text-sm text-gray-900 dark:text-gray-100 font-mono">
+                              <code className="text-sm text-gray-900 dark:text-gray-100 font-mono truncate">
                                 {value}
                               </code>
                             </div>
                             <button
                               onClick={() => copyToClipboard(value, type)}
-                              className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                              className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex-shrink-0 ml-2"
                             >
                               {copiedSlug === `${type}-${value}` ? (
                                 <CheckCircle className="w-3 h-3 text-green-600" />
@@ -652,7 +682,7 @@ const SlugFormatter: React.FC = () => {
                     {/* Stats */}
                     <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
                       <div className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">Estatísticas:</div>
-                      <div className="grid grid-cols-2 gap-4 text-xs text-blue-800 dark:text-blue-300">
+                      <div className="grid grid-cols-2 gap-2 sm:gap-4 text-xs text-blue-800 dark:text-blue-300">
                         <div>Caracteres: {result.stats.originalLength} → {result.stats.slugLength}</div>
                         <div>Palavras: {result.stats.wordsCount}</div>
                         <div>Removidos: {result.stats.charactersRemoved}</div>
@@ -666,7 +696,7 @@ const SlugFormatter: React.FC = () => {
           )}
 
           {/* Examples */}
-          <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/20 dark:border-gray-700/20">
+          <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-6 border border-white/20 dark:border-gray-700/20">
             <div className="flex items-center gap-2 mb-4">
               <Star className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
               <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Exemplos</h3>
@@ -679,17 +709,17 @@ const SlugFormatter: React.FC = () => {
                 { input: 'Melhores Práticas & Dicas', output: 'melhores-praticas-dicas' },
                 { input: 'Tutorial: JavaScript Avançado', output: 'tutorial-javascript-avancado' }
               ].map((example, index) => (
-                <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-                  <div className="flex-1 text-sm">
-                    <div className="text-gray-600 dark:text-gray-400">{example.input}</div>
+                <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                  <div className="flex-1 text-sm min-w-0">
+                    <div className="text-gray-600 dark:text-gray-400 break-words">{example.input}</div>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-gray-400" />
-                  <div className="flex-1 text-sm">
-                    <code className="text-green-600 dark:text-green-400 font-mono">{example.output}</code>
+                  <ArrowRight className="w-4 h-4 text-gray-400 hidden sm:block flex-shrink-0" />
+                  <div className="flex-1 text-sm min-w-0">
+                    <code className="text-green-600 dark:text-green-400 font-mono break-all">{example.output}</code>
                   </div>
                   <button
                     onClick={() => setInputText(example.input)}
-                    className="text-blue-500 hover:text-blue-700 dark:hover:text-blue-300 text-xs"
+                    className="text-blue-500 hover:text-blue-700 dark:hover:text-blue-300 text-xs flex-shrink-0 px-2 py-1 bg-blue-50 dark:bg-blue-900/30 rounded"
                   >
                     Testar
                   </button>
@@ -701,18 +731,18 @@ const SlugFormatter: React.FC = () => {
       </div>
 
       {/* Info Section */}
-      <div className="mt-8 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-6">
+      <div className="mt-6 sm:mt-8 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-4 sm:p-6">
         <div className="flex items-start gap-3">
-          <Info className="w-6 h-6 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+          <Info className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
           <div>
-            <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">🔗 Sobre URLs Amigáveis</h3>
-            <div className="text-blue-800 dark:text-blue-300 leading-relaxed space-y-3">
+            <h3 className="text-base sm:text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">🔗 Sobre URLs Amigáveis</h3>
+            <div className="text-blue-800 dark:text-blue-300 leading-relaxed space-y-3 text-sm sm:text-base">
               <p>
                 URLs amigáveis (slugs) são versões simplificadas de texto que podem ser usadas em URLs, 
                 nomes de arquivos, identificadores CSS/JS e muito mais.
               </p>
               
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-white/50 dark:bg-gray-800/30 rounded-lg p-3">
                   <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1 flex items-center gap-2">
                     <Zap className="w-4 h-4" />
