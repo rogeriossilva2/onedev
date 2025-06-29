@@ -1,37 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import {
-  Send,
-  Plus,
-  X,
-  Copy,
-  Download,
-  Upload,
-  Save,
-  Folder,
-  Clock,
-  Settings,
-  Play,
-  Pause,
-  RotateCcw,
-  Eye,
-  EyeOff,
-  Code,
-  FileText,
-  Database,
-  Globe,
-  Zap,
-  CheckCircle,
-  AlertTriangle,
-  Info,
-  Search,
-  Filter,
-  Trash2,
-  Edit3,
-  Star,
-  BookOpen,
-  Variable,
-  Environment
-} from 'lucide-react';
+import { Send, Plus, X, Copy, Download, Upload, Save, Folder, Clock, Settings, Play, Pause, RotateCcw, Eye, EyeOff, Code, FileText, Database, Globe, Zap, CheckCircle, AlertTriangle, Info, Search, Filter, Trash2, Edit3, Star, BookOpen, Variable, AirVentIcon as Environment } from 'lucide-react';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 
 // Types
