@@ -18,7 +18,8 @@ import {
   Palette,
   Settings,
   Moon,
-  Sun
+  Sun,
+  BarChart3
 } from 'lucide-react';
 
 interface SavedNote {
