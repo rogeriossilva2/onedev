@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, Search, Calculator, Palette, Code, Settings, Home, CreditCard, Code2, Link, FileText, BarChart3, Shield, Scale, Cookie, Heart, Cog, Hash, QrCode, GitBranch, Monitor, Key, Lock, Type, Smartphone, User, Server, Building2, MapPin, Activity, MessageSquare, FileX, Wand2, Package, Globe, Car, Vote, Send } from 'lucide-react';
+import { Menu, X, Search, Calculator, Palette, Code, Settings, Home, CreditCard, Code2, Link, FileText, BarChart3, Shield, Scale, Cookie, Heart, Cog, Hash, QrCode, GitBranch, Monitor, Key, Lock, Type, Smartphone, User, Server, Building2, MapPin, Activity, MessageSquare, FileX, Wand2, Package, Globe, Car, Vote, Send, Edit3 } from 'lucide-react';
 import CookieSettingsModal, { CookieSettings } from './CookieSettings';
 import ThemeToggle from './ThemeToggle';
 import { useAnalytics } from '../hooks/useAnalytics';
@@ -35,6 +35,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentTool = 'seo' }) => {
     { id: 'lorem-ipsum', name: 'Gerador Lorem Ipsum', icon: Type, active: currentTool === 'lorem-ipsum' },
     { id: 'fake-rest-api', name: 'Gerador REST API Fake', icon: Server, active: currentTool === 'fake-rest-api' },
     { id: 'postman-clone', name: 'API Testing Tool', icon: Send, active: currentTool === 'postman-clone' },
+    { id: 'writing-tool', name: 'Writing Tool', icon: Edit3, active: currentTool === 'writing-tool' },
   ];
 
   const supportItems = [

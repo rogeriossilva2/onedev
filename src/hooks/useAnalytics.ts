@@ -61,6 +61,8 @@ const DEFAULT_TOOLS: ToolUsage[] = [
   { id: 'vehicle-generator', name: 'Gerador de Veículos', uses: 0, lastUsed: null },
   { id: 'imc-calculator', name: 'Calculadora de IMC', uses: 0, lastUsed: null },
   { id: 'fake-rest-api', name: 'Gerador REST API Fake', uses: 0, lastUsed: null },
+  { id: 'postman-clone', name: 'API Testing Tool', uses: 0, lastUsed: null },
+  { id: 'writing-tool', name: 'Writing Tool', uses: 0, lastUsed: null },
 ];
 
 // Funções para gerenciar cookies

@@ -17,6 +17,7 @@ import CookiePolicy from './components/CookiePolicy';
 import LGPDInfo from './components/LGPDInfo';
 import About from './components/About';
 import PostmanClone from './components/PostmanClone';
+import WritingTool from './components/WritingTool';
 
 import CookieModal from './components/CookieModal';
 import CookieSettingsModal, { CookieSettings } from './components/CookieSettings';
@@ -114,6 +115,8 @@ function AppContent() {
         return <About />;
       case 'postman-clone':
         return <PostmanClone />;
+      case 'writing-tool':
+        return <WritingTool />;
       default:
         return <Dashboard />;
     }
