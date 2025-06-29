@@ -72,44 +72,89 @@ const IpDetector: React.FC = () => {
   const [copiedField, setCopiedField] = useState('');
   const [showSensitiveData, setShowSensitiveData] = useState(true);
   const [history, setHistory] = useState<DetectionResult[]>([]);
+  const [lastRequestTime, setLastRequestTime] = useState<number>(0);
+  const [retryCount, setRetryCount] = useState<number>(0);
+
+  // Rate limiting: minimum 2 seconds between requests
+  const RATE_LIMIT_MS = 2000;
+  const MAX_RETRIES = 3;
+  const RETRY_DELAY_MS = 5000; // 5 seconds between retries
+
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+  const makeApiRequest = async (url: string, retryAttempt = 0): Promise<{ data: IpInfo; responseTime: number }> => {
+    const now = Date.now();
+    const timeSinceLastRequest = now - lastRequestTime;
+    
+    // Enforce rate limiting
+    if (timeSinceLastRequest < RATE_LIMIT_MS) {
+      const waitTime = RATE_LIMIT_MS - timeSinceLastRequest;
+      await sleep(waitTime);
+    }
+
+    const startTime = Date.now();
+    setLastRequestTime(startTime);
+
+    try {
+      const response = await fetch(url);
+      const responseTime = Date.now() - startTime;
+
+      if (response.status === 429) {
+        if (retryAttempt < MAX_RETRIES) {
+          const waitTime = RETRY_DELAY_MS * (retryAttempt + 1); // Exponential backoff
+          throw new Error(`RATE_LIMIT_RETRY:${waitTime}`);
+        } else {
+          throw new Error('Limite de requisições excedido. Tente novamente em alguns minutos. A API ipapi.co tem um limite de requisições por hora para usuários gratuitos.');
+        }
+      }
+
+      if (!response.ok) {
+        throw new Error(`Erro na API: ${response.status} - ${response.statusText}`);
+      }
+
+      const data: IpInfo = await response.json();
+
+      if (!data.ip) {
+        throw new Error('Dados de IP inválidos recebidos da API');
+      }
+
+      return { data, responseTime };
+    } catch (error) {
+      if (error instanceof Error && error.message.startsWith('RATE_LIMIT_RETRY:')) {
+        const waitTime = parseInt(error.message.split(':')[1]);
+        await sleep(waitTime);
+        return makeApiRequest(url, retryAttempt + 1);
+      }
+      throw error;
+    }
+  };
 
   // Detectar IP atual automaticamente
   const detectCurrentIp = useCallback(async () => {
     setIsLoading(true);
     setError('');
+    setRetryCount(0);
     
     try {
-      const startTime = Date.now();
-      const response = await fetch('https://ipapi.co/json/');
-      const responseTime = Date.now() - startTime;
+      const { data, responseTime } = await makeApiRequest('https://ipapi.co/json/');
       
-      if (!response.ok) {
-        throw new Error(`Erro na API: ${response.status}`);
-      }
+      const result: DetectionResult = {
+        ip: data,
+        detectedAt: new Date(),
+        responseTime,
+        source: 'auto'
+      };
       
-      const data: IpInfo = await response.json();
+      setCurrentIp(result);
       
-      if (data.ip) {
-        const result: DetectionResult = {
-          ip: data,
-          detectedAt: new Date(),
-          responseTime,
-          source: 'auto'
-        };
-        
-        setCurrentIp(result);
-        
-        // Adicionar ao histórico se não for o mesmo IP
-        setHistory(prev => {
-          const exists = prev.some(item => item.ip.ip === data.ip);
-          if (!exists) {
-            return [result, ...prev.slice(0, 9)]; // Manter apenas os 10 mais recentes
-          }
-          return prev;
-        });
-      } else {
-        throw new Error('Dados de IP inválidos recebidos');
-      }
+      // Adicionar ao histórico se não for o mesmo IP
+      setHistory(prev => {
+        const exists = prev.some(item => item.ip.ip === data.ip);
+        if (!exists) {
+          return [result, ...prev.slice(0, 9)]; // Manter apenas os 10 mais recentes
+        }
+        return prev;
+      });
     } catch (error) {
       console.error('Erro ao detectar IP:', error);
       setError(error instanceof Error ? error.message : 'Erro desconhecido ao detectar IP');
@@ -136,39 +181,28 @@ const IpDetector: React.FC = () => {
 
     setIsSearching(true);
     setError('');
+    setRetryCount(0);
     
     try {
-      const startTime = Date.now();
-      const response = await fetch(`https://ipapi.co/${searchIp}/json/`);
-      const responseTime = Date.now() - startTime;
+      const { data, responseTime } = await makeApiRequest(`https://ipapi.co/${searchIp}/json/`);
       
-      if (!response.ok) {
-        throw new Error(`Erro na API: ${response.status}`);
-      }
+      const result: DetectionResult = {
+        ip: data,
+        detectedAt: new Date(),
+        responseTime,
+        source: 'manual'
+      };
       
-      const data: IpInfo = await response.json();
+      setSearchResult(result);
       
-      if (data.ip) {
-        const result: DetectionResult = {
-          ip: data,
-          detectedAt: new Date(),
-          responseTime,
-          source: 'manual'
-        };
-        
-        setSearchResult(result);
-        
-        // Adicionar ao histórico
-        setHistory(prev => {
-          const exists = prev.some(item => item.ip.ip === data.ip);
-          if (!exists) {
-            return [result, ...prev.slice(0, 9)];
-          }
-          return prev;
-        });
-      } else {
-        throw new Error('IP não encontrado ou dados inválidos');
-      }
+      // Adicionar ao histórico
+      setHistory(prev => {
+        const exists = prev.some(item => item.ip.ip === data.ip);
+        if (!exists) {
+          return [result, ...prev.slice(0, 9)];
+        }
+        return prev;
+      });
     } catch (error) {
       console.error('Erro ao buscar IP:', error);
       setError(error instanceof Error ? error.message : 'Erro desconhecido ao buscar IP');
@@ -177,9 +211,13 @@ const IpDetector: React.FC = () => {
     }
   }, [searchIp]);
 
-  // Detectar IP atual na inicialização
+  // Detectar IP atual na inicialização (com delay para evitar rate limit)
   useEffect(() => {
-    detectCurrentIp();
+    const timer = setTimeout(() => {
+      detectCurrentIp();
+    }, 1000); // Delay de 1 segundo na inicialização
+
+    return () => clearTimeout(timer);
   }, [detectCurrentIp]);
 
   const copyToClipboard = async (text: string, field: string) => {
@@ -730,9 +768,17 @@ const IpDetector: React.FC = () => {
         {/* Error Display */}
         {error && (
           <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400" />
-              <span className="text-red-800 dark:text-red-300 font-medium">{error}</span>
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+              <div className="text-red-800 dark:text-red-300">
+                <div className="font-medium mb-1">Erro na consulta</div>
+                <div className="text-sm">{error}</div>
+                {error.includes('Limite de requisições') && (
+                  <div className="text-xs mt-2 text-red-700 dark:text-red-400">
+                    💡 Dica: Aguarde alguns minutos antes de tentar novamente. A API gratuita tem limite de requisições por hora.
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -828,14 +874,26 @@ const IpDetector: React.FC = () => {
                 <div className="bg-white/50 dark:bg-gray-800/30 rounded-lg p-3">
                   <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1 flex items-center gap-2">
                     <Shield className="w-4 h-4" />
-                    Privacidade
+                    Privacidade & Limites
                   </div>
                   <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
                     <li>• Consultas diretas à API</li>
                     <li>• Dados não armazenados</li>
                     <li>• Histórico apenas local</li>
-                    <li>• Processamento seguro</li>
+                    <li>• Limite: ~1000 req/dia (gratuito)</li>
+                    <li>• Rate limit: 2s entre consultas</li>
                   </ul>
+                </div>
+              </div>
+              
+              <div className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3 mt-4">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+                  <div className="text-amber-800 dark:text-amber-300 text-sm">
+                    <strong>Importante:</strong> A API gratuita tem limite de requisições. Se você receber erro 429, 
+                    aguarde alguns minutos antes de tentar novamente. O sistema implementa retry automático e rate limiting 
+                    para minimizar esses erros.
+                  </div>
                 </div>
               </div>
             </div>
