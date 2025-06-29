@@ -23,7 +23,9 @@ import {
   Plus,
   Minus,
   RotateCcw,
-  Search
+  Search,
+  Briefcase,
+  DollarSign
 } from 'lucide-react';
 
 interface CNHData {
@@ -51,14 +53,27 @@ interface TituloEleitorData {
   isValid: boolean;
 }
 
+interface PISPASEPData {
+  number: string;
+  formatted: string;
+  type: 'PIS' | 'PASEP';
+  isValid: boolean;
+}
+
+interface RENAVAMData {
+  number: string;
+  formatted: string;
+  isValid: boolean;
+}
+
 interface GeneratedDocument {
-  type: 'cnh' | 'ie' | 'titulo';
-  data: CNHData | InscricaoEstadualData | TituloEleitorData;
+  type: 'cnh' | 'ie' | 'titulo' | 'pis' | 'renavam';
+  data: CNHData | InscricaoEstadualData | TituloEleitorData | PISPASEPData | RENAVAMData;
   createdAt: Date;
 }
 
 const BrazilianDocumentsGenerator: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'cnh' | 'ie' | 'titulo'>('cnh');
+  const [activeTab, setActiveTab] = useState<'cnh' | 'ie' | 'titulo' | 'pis' | 'renavam'>('cnh');
   const [selectedState, setSelectedState] = useState<string>('SP');
   const [generatedDocuments, setGeneratedDocuments] = useState<GeneratedDocument[]>([]);
   const [copiedField, setCopiedField] = useState<string>('');
@@ -316,6 +331,58 @@ const BrazilianDocumentsGenerator: React.FC = () => {
     };
   }, [selectedState]);
 
+  // Gerar PIS/PASEP
+  const generatePISPASEP = useCallback((): PISPASEPData => {
+    // Gerar 10 dígitos base
+    const baseDigits = Array.from({ length: 10 }, () => Math.floor(Math.random() * 10));
+    
+    // Calcular dígito verificador
+    const weights = [3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    let sum = 0;
+    for (let i = 0; i < 10; i++) {
+      sum += baseDigits[i] * weights[i];
+    }
+    const remainder = sum % 11;
+    const digit = remainder < 2 ? 0 : 11 - remainder;
+    
+    const fullNumber = [...baseDigits, digit].join('');
+    const formatted = fullNumber.replace(/(\d{3})(\d{5})(\d{2})(\d{1})/, '$1.$2.$3-$4');
+    
+    // Determinar tipo (PIS ou PASEP) aleatoriamente
+    const type = Math.random() > 0.5 ? 'PIS' : 'PASEP';
+    
+    return {
+      number: fullNumber,
+      formatted,
+      type,
+      isValid: true
+    };
+  }, []);
+
+  // Gerar RENAVAM
+  const generateRENAVAM = useCallback((): RENAVAMData => {
+    // Gerar 10 dígitos base
+    const baseDigits = Array.from({ length: 10 }, () => Math.floor(Math.random() * 10));
+    
+    // Calcular dígito verificador
+    const weights = [3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    let sum = 0;
+    for (let i = 0; i < 10; i++) {
+      sum += baseDigits[i] * weights[i];
+    }
+    const remainder = sum % 11;
+    const digit = remainder === 0 || remainder === 1 ? 0 : 11 - remainder;
+    
+    const fullNumber = [...baseDigits, digit].join('');
+    const formatted = fullNumber; // RENAVAM não tem formatação específica
+    
+    return {
+      number: fullNumber,
+      formatted,
+      isValid: true
+    };
+  }, []);
+
   // Validar CNH
   const validateCNH = (cnh: string): boolean => {
     const cleanCNH = cnh.replace(/\D/g, '');
@@ -376,8 +443,46 @@ const BrazilianDocumentsGenerator: React.FC = () => {
     return digits[11] === expectedDigit2;
   };
 
+  // Validar PIS/PASEP
+  const validatePISPASEP = (pis: string): boolean => {
+    const cleanPIS = pis.replace(/\D/g, '');
+    if (cleanPIS.length !== 11) return false;
+    
+    const digits = cleanPIS.split('').map(Number);
+    
+    // Calcular dígito verificador
+    const weights = [3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    let sum = 0;
+    for (let i = 0; i < 10; i++) {
+      sum += digits[i] * weights[i];
+    }
+    const remainder = sum % 11;
+    const expectedDigit = remainder < 2 ? 0 : 11 - remainder;
+    
+    return digits[10] === expectedDigit;
+  };
+
+  // Validar RENAVAM
+  const validateRENAVAM = (renavam: string): boolean => {
+    const cleanRENAVAM = renavam.replace(/\D/g, '');
+    if (cleanRENAVAM.length !== 11) return false;
+    
+    const digits = cleanRENAVAM.split('').map(Number);
+    
+    // Calcular dígito verificador
+    const weights = [3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    let sum = 0;
+    for (let i = 0; i < 10; i++) {
+      sum += digits[i] * weights[i];
+    }
+    const remainder = sum % 11;
+    const expectedDigit = remainder === 0 || remainder === 1 ? 0 : 11 - remainder;
+    
+    return digits[10] === expectedDigit;
+  };
+
   const generateDocument = () => {
-    let data: CNHData | InscricaoEstadualData | TituloEleitorData;
+    let data: CNHData | InscricaoEstadualData | TituloEleitorData | PISPASEPData | RENAVAMData;
     
     switch (activeTab) {
       case 'cnh':
@@ -388,6 +493,12 @@ const BrazilianDocumentsGenerator: React.FC = () => {
         break;
       case 'titulo':
         data = generateTituloEleitor();
+        break;
+      case 'pis':
+        data = generatePISPASEP();
+        break;
+      case 'renavam':
+        data = generateRENAVAM();
         break;
     }
     
@@ -423,6 +534,24 @@ const BrazilianDocumentsGenerator: React.FC = () => {
           isValid,
           type: 'Título de Eleitor',
           formatted: validationInput.replace(/(\d{4})(\d{4})(\d{4})/, '$1 $2 $3')
+        };
+        break;
+      case 'pis':
+        isValid = validatePISPASEP(validationInput);
+        result = {
+          ...result,
+          isValid,
+          type: 'PIS/PASEP',
+          formatted: validationInput.replace(/(\d{3})(\d{5})(\d{2})(\d{1})/, '$1.$2.$3-$4')
+        };
+        break;
+      case 'renavam':
+        isValid = validateRENAVAM(validationInput);
+        result = {
+          ...result,
+          isValid,
+          type: 'RENAVAM',
+          formatted: validationInput
         };
         break;
       default:
@@ -475,6 +604,8 @@ const BrazilianDocumentsGenerator: React.FC = () => {
       case 'cnh': return Car;
       case 'ie': return Building2;
       case 'titulo': return Vote;
+      case 'pis': return Briefcase;
+      case 'renavam': return DollarSign;
       default: return FileText;
     }
   };
@@ -484,6 +615,8 @@ const BrazilianDocumentsGenerator: React.FC = () => {
       case 'cnh': return 'CNH';
       case 'ie': return 'Inscrição Estadual';
       case 'titulo': return 'Título de Eleitor';
+      case 'pis': return 'PIS/PASEP';
+      case 'renavam': return 'RENAVAM';
       default: return 'Documento';
     }
   };
@@ -535,7 +668,7 @@ const BrazilianDocumentsGenerator: React.FC = () => {
           </h1>
         </div>
         <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">
-          Gere e valide CNH, Inscrição Estadual e Título de Eleitor com algoritmos oficiais
+          Gere e valide CNH, Inscrição Estadual, Título de Eleitor, PIS/PASEP e RENAVAM com algoritmos oficiais
         </p>
       </div>
 
@@ -545,7 +678,9 @@ const BrazilianDocumentsGenerator: React.FC = () => {
           {[
             { id: 'cnh', label: 'CNH', icon: Car, color: 'from-blue-500 to-blue-600' },
             { id: 'ie', label: 'Inscrição Estadual', icon: Building2, color: 'from-green-500 to-green-600' },
-            { id: 'titulo', label: 'Título de Eleitor', icon: Vote, color: 'from-purple-500 to-purple-600' }
+            { id: 'titulo', label: 'Título de Eleitor', icon: Vote, color: 'from-purple-500 to-purple-600' },
+            { id: 'pis', label: 'PIS/PASEP', icon: Briefcase, color: 'from-orange-500 to-orange-600' },
+            { id: 'renavam', label: 'RENAVAM', icon: DollarSign, color: 'from-red-500 to-red-600' }
           ].map((tab) => {
             const Icon = tab.icon;
             return (
@@ -595,34 +730,48 @@ const BrazilianDocumentsGenerator: React.FC = () => {
         {/* Generator Mode */}
         {!validationMode && (
           <div className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Estado
-                </label>
-                <select
-                  value={selectedState}
-                  onChange={(e) => setSelectedState(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                >
-                  {states.map((state) => (
-                    <option key={state.code} value={state.code}>
-                      {state.name} ({state.code})
-                    </option>
-                  ))}
-                </select>
-              </div>
+            {(activeTab === 'cnh' || activeTab === 'ie' || activeTab === 'titulo') && (
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Estado
+                  </label>
+                  <select
+                    value={selectedState}
+                    onChange={(e) => setSelectedState(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                  >
+                    {states.map((state) => (
+                      <option key={state.code} value={state.code}>
+                        {state.name} ({state.code})
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-              <div className="flex items-end">
+                <div className="flex items-end">
+                  <button
+                    onClick={generateDocument}
+                    className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    <RefreshCw className="w-5 h-5" />
+                    Gerar {getDocumentName(activeTab)}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {(activeTab === 'pis' || activeTab === 'renavam') && (
+              <div className="flex justify-center">
                 <button
                   onClick={generateDocument}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
                   <RefreshCw className="w-5 h-5" />
                   Gerar {getDocumentName(activeTab)}
                 </button>
               </div>
-            </div>
+            )}
           </div>
         )}
 
@@ -641,6 +790,8 @@ const BrazilianDocumentsGenerator: React.FC = () => {
                   placeholder={
                     activeTab === 'cnh' ? 'Ex: 12345678901' :
                     activeTab === 'titulo' ? 'Ex: 1234 5678 9012' :
+                    activeTab === 'pis' ? 'Ex: 123.45678.90-1' :
+                    activeTab === 'renavam' ? 'Ex: 12345678901' :
                     'Digite a Inscrição Estadual'
                   }
                   className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
@@ -738,12 +889,16 @@ const BrazilianDocumentsGenerator: React.FC = () => {
                     <div className={`p-2 rounded-lg ${
                       doc.type === 'cnh' ? 'bg-blue-100 dark:bg-blue-900/30' :
                       doc.type === 'ie' ? 'bg-green-100 dark:bg-green-900/30' :
-                      'bg-purple-100 dark:bg-purple-900/30'
+                      doc.type === 'titulo' ? 'bg-purple-100 dark:bg-purple-900/30' :
+                      doc.type === 'pis' ? 'bg-orange-100 dark:bg-orange-900/30' :
+                      'bg-red-100 dark:bg-red-900/30'
                     }`}>
                       <Icon className={`w-5 h-5 ${
                         doc.type === 'cnh' ? 'text-blue-600 dark:text-blue-400' :
                         doc.type === 'ie' ? 'text-green-600 dark:text-green-400' :
-                        'text-purple-600 dark:text-purple-400'
+                        doc.type === 'titulo' ? 'text-purple-600 dark:text-purple-400' :
+                        doc.type === 'pis' ? 'text-orange-600 dark:text-orange-400' :
+                        'text-red-600 dark:text-red-400'
                       }`} />
                     </div>
                     <div>
@@ -803,6 +958,29 @@ const BrazilianDocumentsGenerator: React.FC = () => {
                     </div>
                   </div>
                 )}
+
+                {/* PIS/PASEP Fields */}
+                {doc.type === 'pis' && (
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      {renderField('Número', (doc.data as PISPASEPData).number, Hash, true)}
+                      {renderField('Formatado', (doc.data as PISPASEPData).formatted, FileText)}
+                    </div>
+                    <div className="space-y-4">
+                      {renderField('Tipo', (doc.data as PISPASEPData).type, Briefcase)}
+                    </div>
+                  </div>
+                )}
+
+                {/* RENAVAM Fields */}
+                {doc.type === 'renavam' && (
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      {renderField('Número RENAVAM', (doc.data as RENAVAMData).number, Hash, true)}
+                      {renderField('Formatado', (doc.data as RENAVAMData).formatted, FileText)}
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}
@@ -858,6 +1036,32 @@ const BrazilianDocumentsGenerator: React.FC = () => {
                     <li>• Zona e seção eleitorais</li>
                     <li>• Algoritmo TSE oficial</li>
                     <li>• Validação por estado</li>
+                  </ul>
+                </div>
+
+                <div className="bg-white/50 dark:bg-gray-800/30 rounded-lg p-3">
+                  <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1 flex items-center gap-2">
+                    <Briefcase className="w-4 h-4" />
+                    PIS/PASEP
+                  </div>
+                  <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+                    <li>• 11 dígitos com verificador</li>
+                    <li>• Algoritmo oficial</li>
+                    <li>• Formatação padrão</li>
+                    <li>• Validação completa</li>
+                  </ul>
+                </div>
+
+                <div className="bg-white/50 dark:bg-gray-800/30 rounded-lg p-3">
+                  <div className="font-semibold text-blue-900 dark:text-blue-100 mb-1 flex items-center gap-2">
+                    <DollarSign className="w-4 h-4" />
+                    RENAVAM
+                  </div>
+                  <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+                    <li>• 11 dígitos com verificador</li>
+                    <li>• Algoritmo oficial DENATRAN</li>
+                    <li>• Registro nacional de veículos</li>
+                    <li>• Validação automática</li>
                   </ul>
                 </div>
               </div>
