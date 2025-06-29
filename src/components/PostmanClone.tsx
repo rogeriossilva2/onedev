@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Send, Plus, X, Copy, Download, Upload, Save, Folder, Clock, Settings, Play, Pause, RotateCcw, Eye, EyeOff, Code, FileText, Database, Globe, Zap, CheckCircle, AlertTriangle, Info, Search, Filter, Trash2, Edit3, Star, BookOpen, Variable, AirVentIcon as Environment } from 'lucide-react';
+import { Send, Plus, X, Copy, Download, Upload, Save, Folder, Clock, Settings, Play, Pause, RotateCcw, Eye, EyeOff, Code, FileText, Database, Globe, Zap, CheckCircle, AlertTriangle, Info, Search, Filter, Trash2, Edit3, Star, BookOpen, Variable, AirVentIcon as Environment, MoreVertical, Edit, FolderOpen } from 'lucide-react';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 
 // Types
@@ -92,6 +92,9 @@ const PostmanClone: React.FC = () => {
   const [sidebarTab, setSidebarTab] = useState<'collections' | 'history' | 'environments'>('collections');
   const [showVariables, setShowVariables] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [editingCollection, setEditingCollection] = useState<string | null>(null);
+  const [editingCollectionName, setEditingCollectionName] = useState('');
+  const [collectionMenuOpen, setCollectionMenuOpen] = useState<string | null>(null);
 
   // Load data from localStorage on mount
   useEffect(() => {
@@ -210,6 +213,66 @@ const PostmanClone: React.FC = () => {
       }
     });
   }, [updateActiveTab, tabs, activeTabId]);
+
+  // Collection management functions
+  const createNewCollection = useCallback(() => {
+    const name = prompt('Collection name:');
+    if (name && name.trim()) {
+      const newCollection: Collection = {
+        id: generateId(),
+        name: name.trim(),
+        requests: [],
+        createdAt: new Date()
+      };
+      setCollections(prev => [...prev, newCollection]);
+    }
+  }, []);
+
+  const renameCollection = useCallback((collectionId: string, newName: string) => {
+    if (newName && newName.trim()) {
+      setCollections(prev => prev.map(col => 
+        col.id === collectionId 
+          ? { ...col, name: newName.trim() }
+          : col
+      ));
+    }
+    setEditingCollection(null);
+    setEditingCollectionName('');
+  }, []);
+
+  const deleteCollection = useCallback((collectionId: string) => {
+    const collection = collections.find(col => col.id === collectionId);
+    if (collection && window.confirm(`Are you sure you want to delete "${collection.name}"? This action cannot be undone.`)) {
+      setCollections(prev => prev.filter(col => col.id !== collectionId));
+    }
+    setCollectionMenuOpen(null);
+  }, [collections]);
+
+  const duplicateCollection = useCallback((collectionId: string) => {
+    const collection = collections.find(col => col.id === collectionId);
+    if (collection) {
+      const duplicatedCollection: Collection = {
+        id: generateId(),
+        name: `${collection.name} (Copy)`,
+        requests: collection.requests.map(req => ({
+          ...req,
+          id: generateId(),
+          name: `${req.name} (Copy)`
+        })),
+        createdAt: new Date()
+      };
+      setCollections(prev => [...prev, duplicatedCollection]);
+    }
+    setCollectionMenuOpen(null);
+  }, [collections]);
+
+  const removeRequestFromCollection = useCallback((collectionId: string, requestId: string) => {
+    setCollections(prev => prev.map(col => 
+      col.id === collectionId
+        ? { ...col, requests: col.requests.filter(req => req.id !== requestId) }
+        : col
+    ));
+  }, []);
 
   // Variable replacement
   const replaceVariables = useCallback((text: string): string => {
@@ -491,6 +554,16 @@ const PostmanClone: React.FC = () => {
     return 'text-gray-600 bg-gray-50 border-gray-200';
   };
 
+  // Close collection menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setCollectionMenuOpen(null);
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
   if (!activeTab) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -560,19 +633,9 @@ const PostmanClone: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold text-gray-900 dark:text-gray-100">Collections</h3>
                   <button
-                    onClick={() => {
-                      const name = prompt('Collection name:');
-                      if (name) {
-                        const newCollection: Collection = {
-                          id: generateId(),
-                          name,
-                          requests: [],
-                          createdAt: new Date()
-                        };
-                        setCollections(prev => [...prev, newCollection]);
-                      }
-                    }}
-                    className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    onClick={createNewCollection}
+                    className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                    title="Create new collection"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
@@ -581,31 +644,130 @@ const PostmanClone: React.FC = () => {
                 {collections.map(collection => (
                   <div key={collection.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium text-gray-900 dark:text-gray-100">{collection.name}</h4>
-                      <span className="text-xs text-gray-500">{collection.requests.length} requests</span>
+                      {editingCollection === collection.id ? (
+                        <input
+                          type="text"
+                          value={editingCollectionName}
+                          onChange={(e) => setEditingCollectionName(e.target.value)}
+                          onBlur={() => renameCollection(collection.id, editingCollectionName)}
+                          onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                              renameCollection(collection.id, editingCollectionName);
+                            } else if (e.key === 'Escape') {
+                              setEditingCollection(null);
+                              setEditingCollectionName('');
+                            }
+                          }}
+                          className="flex-1 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                          autoFocus
+                        />
+                      ) : (
+                        <div className="flex items-center gap-2 flex-1">
+                          <FolderOpen className="w-4 h-4 text-orange-500" />
+                          <h4 className="font-medium text-gray-900 dark:text-gray-100 truncate">{collection.name}</h4>
+                        </div>
+                      )}
+                      
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs text-gray-500">{collection.requests.length}</span>
+                        <div className="relative">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setCollectionMenuOpen(collectionMenuOpen === collection.id ? null : collection.id);
+                            }}
+                            className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                          >
+                            <MoreVertical className="w-4 h-4" />
+                          </button>
+                          
+                          {collectionMenuOpen === collection.id && (
+                            <div className="absolute right-0 top-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10 min-w-40">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setEditingCollection(collection.id);
+                                  setEditingCollectionName(collection.name);
+                                  setCollectionMenuOpen(null);
+                                }}
+                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 first:rounded-t-lg"
+                              >
+                                <Edit className="w-4 h-4" />
+                                Rename
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  duplicateCollection(collection.id);
+                                }}
+                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                              >
+                                <Copy className="w-4 h-4" />
+                                Duplicate
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteCollection(collection.id);
+                                }}
+                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 last:rounded-b-lg"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                                Delete
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
+                    
                     <div className="space-y-1">
                       {collection.requests.map(request => (
-                        <button
-                          key={request.id}
-                          onClick={() => createNewTab(request)}
-                          className="w-full text-left p-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded flex items-center gap-2"
-                        >
-                          <span className={`px-2 py-1 text-xs rounded font-medium ${
-                            request.method === 'GET' ? 'bg-green-100 text-green-800' :
-                            request.method === 'POST' ? 'bg-blue-100 text-blue-800' :
-                            request.method === 'PUT' ? 'bg-orange-100 text-orange-800' :
-                            request.method === 'DELETE' ? 'bg-red-100 text-red-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {request.method}
-                          </span>
-                          <span className="truncate">{request.name}</span>
-                        </button>
+                        <div key={request.id} className="group flex items-center justify-between">
+                          <button
+                            onClick={() => createNewTab(request)}
+                            className="flex-1 text-left p-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded flex items-center gap-2"
+                          >
+                            <span className={`px-2 py-1 text-xs rounded font-medium ${
+                              request.method === 'GET' ? 'bg-green-100 text-green-800' :
+                              request.method === 'POST' ? 'bg-blue-100 text-blue-800' :
+                              request.method === 'PUT' ? 'bg-orange-100 text-orange-800' :
+                              request.method === 'DELETE' ? 'bg-red-100 text-red-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {request.method}
+                            </span>
+                            <span className="truncate">{request.name}</span>
+                          </button>
+                          <button
+                            onClick={() => removeRequestFromCollection(collection.id, request.id)}
+                            className="opacity-0 group-hover:opacity-100 p-1 text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-opacity"
+                            title="Remove from collection"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
                       ))}
+                      
+                      {collection.requests.length === 0 && (
+                        <p className="text-xs text-gray-400 italic py-2">No requests in this collection</p>
+                      )}
                     </div>
                   </div>
                 ))}
+                
+                {collections.length === 0 && (
+                  <div className="text-center py-8">
+                    <Folder className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-500 text-sm mb-3">No collections yet</p>
+                    <button
+                      onClick={createNewCollection}
+                      className="px-4 py-2 bg-orange-500 text-white text-sm rounded-lg hover:bg-orange-600 transition-colors"
+                    >
+                      Create Collection
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
