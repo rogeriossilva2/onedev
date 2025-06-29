@@ -16,6 +16,7 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import CookiePolicy from './components/CookiePolicy';
 import LGPDInfo from './components/LGPDInfo';
 import About from './components/About';
+import PostmanClone from './components/PostmanClone';
 
 import CookieModal from './components/CookieModal';
 import CookieSettingsModal, { CookieSettings } from './components/CookieSettings';
@@ -111,6 +112,8 @@ function AppContent() {
         return <LGPDInfo />;
       case 'about':
         return <About />;
+      case 'postman-clone':
+        return <PostmanClone />;
       default:
         return <Dashboard />;
     }
